@@ -62,7 +62,7 @@ public class RecursiveBacktracker extends Maze implements Serializable {
      * 
      * @param  x the x-coordinate of the starting position
      * @param  y the y-coordinate of the starting position
-     * @throws PositionOutOfBoundsException if start is out of bounds
+     * @throws PositionOutOfBoundsException if (x, y) is out of bounds
      */
     public void setStart(int x, int y) {
         checkPosition(x, y);
