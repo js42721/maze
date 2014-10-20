@@ -97,7 +97,7 @@ public class TileMaze implements Serializable {
      * @throws NullPointerException if p is null
      */
     public boolean isWall(Position p) {
-        return isWall(p.x, p.y);
+        return isWall(p.getX(), p.getY());
     }
     
     @Override

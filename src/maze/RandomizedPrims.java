@@ -15,13 +15,13 @@ import java.util.List;
  * spanning tree.
  */
 public class RandomizedPrims extends Maze implements Serializable {
-    private static final long serialVersionUID = -4566819517395897518L;
+    private static final long serialVersionUID = 7747472214454525445L;
     
     private static final byte OUT      = 0b0000;
     private static final byte IN       = 0b0001;
     private static final byte FRONTIER = 0b0010;
     
-    private Position start;
+    private Node start;
     
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
@@ -31,7 +31,8 @@ public class RandomizedPrims extends Maze implements Serializable {
      * @throws IllegalArgumentException if width or height is not positive
      */
     public RandomizedPrims(int width, int height) {
-        this(width, height, randomPosition(width, height));
+        super(width, height);
+        start = new Node(random(width), random(height));
     }
     
     /**
@@ -46,9 +47,11 @@ public class RandomizedPrims extends Maze implements Serializable {
      * @throws PositionOutOfBoundsException if (x, y) is out of bounds
      */
     public RandomizedPrims(int width, int height, int startX, int startY) {
-        this(width, height, new Position(startX, startY));
+        super(width, height);
+        checkPosition(startX, startY);
+        start = new Node(startX, startY);
     }
-
+    
     /**
      * Sets the dimensions and the starting position. Call {@link #generate}
      * to generate the maze.
@@ -61,36 +64,46 @@ public class RandomizedPrims extends Maze implements Serializable {
      * @throws NullPointerException if start is null
      */
     public RandomizedPrims(int width, int height, Position start) {
-        super(width, height);
-        setStart(start);
+        this(width, height, start.getX(), start.getY());
     }
-    
-    /** 
+
+    /**
      * Sets the algorithm's starting position.
      * 
+     * @param  x the x-coordinate of the starting position
+     * @param  y the y-coordinate of the starting position
+     * @throws PositionOutOfBoundsException if start is out of bounds
+     */
+    public void setStart(int x, int y) {
+        checkPosition(x, y);
+        start.set(x, y);
+    }
+    
+    /**
+     * Sets the algorithm's starting position.
+     * 
+     * @param  start the starting position
      * @throws PositionOutOfBoundsException if start is out of bounds
      * @throws NullPointerException if start is null
      */
     public void setStart(Position start) {
-        checkPosition(start);
-        this.start = start;
+        setStart(start.getX(), start.getY());
     }
     
     /** Returns the algorithm's starting position. */
     public Position getStart() {
-        return start;
+        return new Node(start);
     }
     
     @Override
     public void generate() {
-        fill();
-        resetFlags();
+        resetFill();
         randomizedPrims(start);
     }
     
-    private void randomizedPrims(Position start) {
+    private void randomizedPrims(Node start) {
         /* Frontiers are the unvisited nodes adjacent to the visited ones. */
-        List<Position> frontiers = new ArrayList<Position>();
+        List<Node> frontiers = new ArrayList<Node>();
         List<Direction> neighbors = new ArrayList<Direction>(4);
         
         /* Marks the starting node as visited and gets its frontiers. */
@@ -102,7 +115,7 @@ public class RandomizedPrims extends Maze implements Serializable {
             int random = random(frontiers.size());
             int last = frontiers.size() - 1;
             Collections.swap(frontiers, random, last); // For O(1) removal.
-            Position current = frontiers.remove(last);
+            Node current = frontiers.remove(last);
             
             /* Picks randomly from the visited neighbors of the frontier. */
             getVisitedNeighbors(current, neighbors);
@@ -124,41 +137,41 @@ public class RandomizedPrims extends Maze implements Serializable {
      * Finds the unvisited neighbors of a node and adds them to the frontier
      * list if they were not already included.
      */
-    private void getFrontiers(Position p, List<Position> frontiers) {
-        if (p.y > 0 && getFlags(p.x, p.y - 1) == OUT) {
-            markFrontier(p.x, p.y - 1, frontiers);
+    private void getFrontiers(Node n, List<Node> frontiers) {
+        if (n.y > 0 && getFlags(n.x, n.y - 1) == OUT) {
+            markFrontier(n.x, n.y - 1, frontiers);
         }
-        if (p.x > 0 && getFlags(p.x - 1, p.y) == OUT) {
-            markFrontier(p.x - 1, p.y, frontiers);
+        if (n.x > 0 && getFlags(n.x - 1, n.y) == OUT) {
+            markFrontier(n.x - 1, n.y, frontiers);
         }
-        if (p.y < getHeight() - 1 && getFlags(p.x, p.y + 1) == OUT) {
-            markFrontier(p.x, p.y + 1, frontiers);
+        if (n.y < getHeight() - 1 && getFlags(n.x, n.y + 1) == OUT) {
+            markFrontier(n.x, n.y + 1, frontiers);
         }
-        if (p.x < getWidth() - 1 && getFlags(p.x + 1, p.y) == OUT) {
-            markFrontier(p.x + 1, p.y, frontiers);
+        if (n.x < getWidth() - 1 && getFlags(n.x + 1, n.y) == OUT) {
+            markFrontier(n.x + 1, n.y, frontiers);
         }
     }
     
     /** Helper method for getFrontiers. */
-    private void markFrontier(int x, int y, List<Position> frontiers) {
-        Position p = new Position(x, y);
-        setFlags(p, FRONTIER);
-        frontiers.add(p);
+    private void markFrontier(int x, int y, List<Node> frontiers) {
+        Node n = new Node(x, y);
+        setFlags(n, FRONTIER);
+        frontiers.add(n);
     }
     
     /** Gets the directions pointing to the visited neighbors of a node. */
-    private void getVisitedNeighbors(Position p, List<Direction> neighbors) {
+    private void getVisitedNeighbors(Node n, List<Direction> neighbors) {
         neighbors.clear();
-        if (p.y > 0 && (getFlags(p.x, p.y - 1) & IN) != 0) {
+        if (n.y > 0 && (getFlags(n.x, n.y - 1) & IN) != 0) {
             neighbors.add(Direction.UP);
         }
-        if (p.x > 0 && (getFlags(p.x - 1, p.y) & IN) != 0) {
+        if (n.x > 0 && (getFlags(n.x - 1, n.y) & IN) != 0) {
             neighbors.add(Direction.LEFT);
         }
-        if (p.y < getHeight() - 1 && (getFlags(p.x, p.y + 1) & IN) != 0) {
+        if (n.y < getHeight() - 1 && (getFlags(n.x, n.y + 1) & IN) != 0) {
             neighbors.add(Direction.DOWN);
         }
-        if (p.x < getWidth() - 1 && (getFlags(p.x + 1, p.y) & IN) != 0) {
+        if (n.x < getWidth() - 1 && (getFlags(n.x + 1, n.y) & IN) != 0) {
             neighbors.add(Direction.RIGHT);
         }
     }

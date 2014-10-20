@@ -1,67 +1,35 @@
 package maze;
 
-import java.io.Serializable;
-
-/** An immutable pair of maze coordinates. */
-public final class Position implements Serializable {
-    private static final long serialVersionUID = -5356304224760074820L;
-    
-    public final int x;
-    public final int y;
-    
-    /**
-     * Creates a pair of maze coordinates.
-     * 
-     * @param x the x-coordinate
-     * @param y the y-coordinate
-     */
-    public Position(int x, int y) {
-        this.x = x;
-        this.y = y;
+/** A pair of coordinates. */
+public abstract class Position {
+    protected Position() {
     }
     
-    /**
-     * Creates a pair of coordinates from another.
-     * 
-     * @param  other the other position
-     * @throws NullPointerException if the other position is null
-     */
-    public Position(Position other) {
-        this(other.x, other.y);
-    }
+    /** Returns the x-coordinate. */
+    public abstract int getX();
 
+    /** Returns the y-coordinate. */
+    public abstract int getY();
+    
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        return "(" + getX() + ", " + getY() + ")";
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
         int result = 1;
-        result = prime * result + x;
-        result = prime * result + y;
+        result = result * 31 + getX();
+        result = result * 31 + getY();
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+        if (obj instanceof Position) {
+            Position p = (Position)obj;
+            return getX() == p.getX() && getY() == p.getY();
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Position other = (Position)obj;
-        if (x != other.x) {
-            return false;
-        }
-        if (y != other.y) {
-            return false;
-        }
-        return true;
+        return super.equals(obj);
     }
 }

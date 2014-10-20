@@ -9,9 +9,9 @@ import java.util.List;
  * exploring unvisited nodes using randomized depth-first search.
  */
 public class RecursiveBacktracker extends Maze implements Serializable {
-    private static final long serialVersionUID = -5608567941754857805L;
+    private static final long serialVersionUID = 2155816886742145694L;
     
-    private Position start;
+    private Node start;
     
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
@@ -21,7 +21,8 @@ public class RecursiveBacktracker extends Maze implements Serializable {
      * @throws IllegalArgumentException if width or height is not positive
      */
     public RecursiveBacktracker(int width, int height) {
-        this(width, height, randomPosition(width, height));
+        super(width, height);
+        start = new Node(random(width), random(height));
     }
     
     /**
@@ -36,7 +37,9 @@ public class RecursiveBacktracker extends Maze implements Serializable {
      * @throws PositionOutOfBoundsException if (x, y) is out of bounds
      */
     public RecursiveBacktracker(int width, int height, int startX, int startY) {
-        this(width, height, new Position(startX, startY));
+        super(width, height);
+        checkPosition(startX, startY);
+        start = new Node(startX, startY);
     }
     
     /**
@@ -51,81 +54,89 @@ public class RecursiveBacktracker extends Maze implements Serializable {
      * @throws NullPointerException if start is null
      */
     public RecursiveBacktracker(int width, int height, Position start) {
-        super(width, height);
-        setStart(start);
+        this(width, height, start.getX(), start.getY());
+    }
+
+    /**
+     * Sets the algorithm's starting position.
+     * 
+     * @param  x the x-coordinate of the starting position
+     * @param  y the y-coordinate of the starting position
+     * @throws PositionOutOfBoundsException if start is out of bounds
+     */
+    public void setStart(int x, int y) {
+        checkPosition(x, y);
+        start.set(x, y);
     }
     
     /**
      * Sets the algorithm's starting position.
      * 
+     * @param  start the starting position
      * @throws PositionOutOfBoundsException if start is out of bounds
      * @throws NullPointerException if start is null
      */
     public void setStart(Position start) {
-        checkPosition(start);
-        this.start = start;
+        setStart(start.getX(), start.getY());
     }
     
     /** Returns the algorithm's starting position. */
     public Position getStart() {
-        return start;
+        return new Node(start);
     }
     
     @Override
     public void generate() {
-        fill();
+        resetFill();
         recursiveBacktrack(start);
     }
     
-    private void recursiveBacktrack(Position start) {
+    private void recursiveBacktrack(Node start) {
         Direction[] directions = Direction.values();
         List<Direction> moves = new ArrayList<Direction>(4);
         int unvisited = getWidth() * getHeight() - 1;
         
-        int x = start.x;
-        int y = start.y;
+        Node current = new Node(start);
         
         while (unvisited > 0) {
             /* Finds adjacent unvisited nodes. */
-            getMoves(x, y, moves);
+            getMoves(current, moves);
             
             /* Takes a step back if there are no such nodes. */
             if (moves.isEmpty()) {
                 /* Moves in the reverse of the saved direction. */
-                Direction rev = directions[getFlags(x, y)].getReverse();
-                x += rev.dx;
-                y += rev.dy;
+                Direction rev = directions[getFlags(current)].getReverse();
+                current.translate(rev.dx, rev.dy);
                 continue;
             }
             
-            /* Picks an adjacent unvisited node randomly and adds it to the maze. */
+            /* Picks a random adjacent unvisited node and adds it to the maze. */
             Direction d = moves.get(random(moves.size()));
-            carve(x, y, d);
+            carve(current, d);
             
             /* Updates the current node to the newly added node. */
-            x += d.dx;
-            y += d.dy;
+            current.translate(d.dx, d.dy);
             
             /* Saves the direction taken to reach the current node. */
-            setFlags(x, y, (byte)d.ordinal());
+            setFlags(current, (byte)d.ordinal());
             
             --unvisited;
         }
     }
 
     /** Gets the directions which point to adjacent unvisited nodes. */
-    private void getMoves(int x, int y, List<Direction> moves) {
+    private void getMoves(Node n, List<Direction> moves) {
         moves.clear();
-        if (y > 0 && isClosed(x, y - 1)) {
+        if (n.y > 0 && isClosed(n.x, n.y - 1)) {
             moves.add(Direction.UP);
         }
-        if (x > 0 && isClosed(x - 1, y)) {
+        if (n.x > 0 && isClosed(n.x - 1, n.y)) {
             moves.add(Direction.LEFT);
         }
-        if (y < getHeight() - 1 && isClosed(x, y + 1)) {
+        if (n.y < getHeight() - 1 && isClosed(n.x, n.y + 1)) {
             moves.add(Direction.DOWN);
         }
-        if (x < getWidth() - 1 && isClosed(x + 1, y)) {
+        if (n.x < getWidth() - 1 && isClosed(n.x + 1, n.y)) {
             moves.add(Direction.RIGHT);
         }
     }

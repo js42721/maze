@@ -27,8 +27,7 @@ public class Wilsons extends Maze implements Serializable {
     
     @Override
     public void generate() {
-        fill();
-        resetFlags();
+        resetFill();
         wilson();
     }
     
@@ -58,46 +57,50 @@ public class Wilsons extends Maze implements Serializable {
     private void wilson() {
         Direction[] directions = Direction.values();
         List<Direction> moves = new ArrayList<Direction>(4);
+        Node walk = new Node();
+        Node trace = new Node();
         int i = getWidth() * getHeight() - 2;
         
-        /* Marks the first visited node. */
+        /* Marks a node as visited. */
         setFlags(getWidth() - 1, getHeight() - 1, IN);
+        
+        /* Picks an unvisited node. */
+        Node current = new Node(i % getWidth(), i / getWidth());
 
         while (i >= 0) {
-            int wx, wy, tx, ty;
-            ty = wy = i / getWidth();
-            tx = wx = i - wy * getWidth();
+            walk.set(current);
             
             /* Walks randomly until a visited node is found. */
-            while ((getFlags(wx, wy) & IN) == 0) {
-                getMoves(wx, wy, moves);
+            while ((getFlags(walk) & IN) == 0) {
+                getMoves(walk, moves);
                 Direction d = moves.get(random(moves.size()));
 
                 /* Saves the node's exit direction. */
-                setFlags(wx, wy, (byte)d.ordinal());
+                setFlags(walk, (byte)d.ordinal());
 
-                wx += d.dx;
-                wy += d.dy;
+                walk.translate(d.dx, d.dy);
             }
             
+            trace.set(current);
+            byte flags = getFlags(trace);
+            
             /* Traces the path of the walk but avoids any loops. */
-            while ((getFlags(tx, ty) & IN) == 0) {
-                /* Follows the saved exit direction. */
-                Direction d = directions[getFlags(tx, ty)];
-                carve(tx, ty, d);
+            while ((flags & IN) == 0) {
+                /* Carves along the saved exit direction. */
+                Direction d = directions[flags];
+                carve(trace, d);
                 
                 /* Marks the node as visited. */
-                setFlags(tx, ty, IN);
+                setFlags(trace, IN);
 
-                tx += d.dx;
-                ty += d.dy;
+                trace.translate(d.dx, d.dy);
+                flags = getFlags(trace);
             }
 
             /* Finds the next unvisited node. */
             while (i >= 0) {
-                int y = i / getWidth();
-                int x = i - y * getWidth();
-                if ((getFlags(x, y) & IN) == 0) {
+                current.set(i % getWidth(), i / getWidth());
+                if ((getFlags(current) & IN) == 0) {
                     break;
                 }
                 --i;
@@ -105,19 +108,19 @@ public class Wilsons extends Maze implements Serializable {
         }
     }
     
-    /** Gets the moves that can be made from a position. */
-    private void getMoves(int x, int y, List<Direction> moves) {
+    /** Gets the moves that can be made from a node. */
+    private void getMoves(Node n, List<Direction> moves) {
         moves.clear();
-        if (y > 0) {
+        if (n.y > 0) {
             moves.add(Direction.UP);
         }
-        if (x > 0) {
+        if (n.x > 0) {
             moves.add(Direction.LEFT);
         }
-        if (y < getHeight() - 1) {
+        if (n.y < getHeight() - 1) {
             moves.add(Direction.DOWN);
         }
-        if (x < getWidth() - 1) {
+        if (n.x < getWidth() - 1) {
             moves.add(Direction.RIGHT);
         }
     }

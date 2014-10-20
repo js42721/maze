@@ -23,7 +23,7 @@ public class BinaryTreeMaze extends Maze implements Serializable {
 
     @Override
     public void generate() {
-        clear();
+        reset();
         addBorders();
         binaryTreeMaze();
     }
@@ -31,7 +31,7 @@ public class BinaryTreeMaze extends Maze implements Serializable {
     private void binaryTreeMaze() {        
         for (int y = 1; y < getHeight(); ++y) {
             for (int x = 1; x < getWidth(); ++x) {
-                putWall(x, y, coinToss() ? Direction.LEFT : Direction.UP);
+                addWall(x, y, coinToss() ? Direction.LEFT : Direction.UP);
             }
         }
     }

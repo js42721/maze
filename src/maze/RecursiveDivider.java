@@ -29,7 +29,7 @@ public class RecursiveDivider extends Maze implements Serializable {
     
     @Override
     public void generate() {
-        clear();
+        reset();
         addBorders();
         recursiveDivision();
     }
@@ -49,50 +49,41 @@ public class RecursiveDivider extends Maze implements Serializable {
             int endY = r.y + r.height;
             
             /* The two subsections. */
-            Rectangle a = new Rectangle();
-            Rectangle b = new Rectangle(r.x, r.y, 0, 0);
+            Rectangle a = new Rectangle(r.x, r.y, 0, 0);
+            Rectangle b = new Rectangle();
 
             if (getOrientation(r.width, r.height) == HORIZONTAL) {
-                /* Picks a random location for the wall. */
-                int y = random(r.y, endY - 1);
-                /* Creates the wall. */
-                for (int x = r.x; x < endX; ++x) {
-                    putWall(x, y, Direction.DOWN);
+                int y = random(r.y, endY - 1); // Picks a random location.
+                for (int x = r.x; x < endX; ++x) { // Places the wall.
+                    addWall(x, y, Direction.DOWN);
                 }
-                /* Creates a random opening in the wall. */
-                carve(random(r.x, endX), y, Direction.DOWN);
-                a.x = r.x;
-                a.y = y + 1;
-                a.width = r.width;
-                a.height = endY - y - 1;
+                carve(random(r.x, endX), y, Direction.DOWN); // Makes an opening.
+                b.x = r.x;
+                b.y = y + 1;
                 b.width = r.width;
-                b.height = a.y - r.y;
+                b.height = endY - y - 1;
+                a.width = r.width;
+                a.height = b.y - r.y;
             } else { // Perpendicular version of the above.
                 int x = random(r.x, endX - 1);
                 for (int y = r.y; y < endY; ++y) {
-                    putWall(x, y, Direction.RIGHT);
+                    addWall(x, y, Direction.RIGHT);
                 }
                 carve(x, random(r.y, endY), Direction.RIGHT);
-                a.x = x + 1;
-                a.y = r.y;
-                a.width = endX - x - 1;
-                a.height = r.height;
-                b.width = a.x - r.x;
+                b.x = x + 1;
+                b.y = r.y;
+                b.width = endX - x - 1;
                 b.height = r.height;
+                a.width = b.x - r.x;
+                a.height = r.height;
             }
             
-            stack.push(a);
             stack.push(b);
+            stack.push(a);
         }
     }
     
-    /**
-     * Chooses wall orientation based on the dimensions of an area.
-     * 
-     * @param  width the width of the area to be partitioned
-     * @param  height the height of the area to be partitioned
-     * @return the wall orientation
-     */
+    /** Chooses wall orientation based on the dimensions of an area. */
     private boolean getOrientation(int width, int height) {
         if (width > height * 2) {
             return VERTICAL;

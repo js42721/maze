@@ -1,15 +1,16 @@
 package maze;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /** 
  * A two-dimensional maze representation. The walls of a maze node are stored
- * in four bit fields. Each node occupies a byte, leaving four bits per node
- * which subclasses can use for setting flags.
+ * in four bit fields. Each node occupies a byte, leaving four bits available
+ * for use by subclasses.
  */
 public abstract class Maze implements Serializable {
-    private static final long serialVersionUID = -5391740526872639793L;
+    private static final long serialVersionUID = 5362218962430254596L;
 
     private static final byte WALL_MASK = 0b1111;
     
@@ -24,7 +25,7 @@ public abstract class Maze implements Serializable {
      * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
      */
-    public Maze(int width, int height) {
+    protected Maze(int width, int height) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("Width and height must be positive");
         }
@@ -71,7 +72,7 @@ public abstract class Maze implements Serializable {
      * @throws NullPointerException if an argument is null
      */
     public final boolean isWall(Position p, Direction d) {
-        return isWall(p.x, p.y, d);
+        return isWall(p.getX(), p.getY(), d);
     }    
     
     @Override
@@ -106,18 +107,28 @@ public abstract class Maze implements Serializable {
         return builder.toString();
     }
     
-    /** Fills the maze with walls. */
-    protected final void fill() {
+    /** Fills the maze with walls (leaves flags intact). */
+    protected final void fillWalls() {
         for (int i = 0; i < maze.length; ++i) {
             maze[i] |= WALL_MASK;
         }
     }
     
-    /** Removes all walls. */
-    protected final void clear() {
+    /** Removes all walls (leaves flags intact). */
+    protected final void clearWalls() {
         for (int i = 0; i < maze.length; ++i) {
             maze[i] &= ~WALL_MASK;
         }
+    }
+    
+    /** Clears all walls and flags. */
+    protected final void reset() {
+        Arrays.fill(maze, (byte)0);
+    }
+    
+    /** Fills the maze with walls and clears all flags. */
+    protected final void resetFill() {
+        Arrays.fill(maze, WALL_MASK);
     }
 
     /** Creates the borders. */
@@ -133,14 +144,14 @@ public abstract class Maze implements Serializable {
     }
     
     /** Places a wall between two positions. */
-    protected final void putWall(int x, int y, Direction d) {
+    protected final void addWall(int x, int y, Direction d) {
         maze[y * width + x] |= d.mask;
         maze[(y + d.dy) * width + x + d.dx] |= d.getReverse().mask;
     }
     
     /** Places a wall between two positions. */
-    protected final void putWall(Position p, Direction d) {
-        putWall(p.x, p.y, d);
+    protected final void addWall(Position p, Direction d) {
+        addWall(p.getX(), p.getY(), d);
     }
     
     /** Removes the wall between two positions. */
@@ -151,7 +162,7 @@ public abstract class Maze implements Serializable {
 
     /** Removes the wall between two positions. */
     protected final void carve(Position p, Direction d) {
-        carve(p.x, p.y, d);
+        carve(p.getX(), p.getY(), d);
     }
 
     /** Adds a wall to the borders. */
@@ -164,7 +175,7 @@ public abstract class Maze implements Serializable {
 
     /** Adds a wall to the borders. */
     protected final void addBorder(Position p, Direction d) {
-        addBorder(p.x, p.y, d);
+        addBorder(p.getX(), p.getY(), d);
     }
 
     /** Removes a wall from the borders. */
@@ -177,7 +188,7 @@ public abstract class Maze implements Serializable {
 
     /** Removes a wall from the borders. */
     protected final void removeBorder(Position p, Direction d) {
-        removeBorder(p.x, p.y, d);
+        removeBorder(p.getX(), p.getY(), d);
     }
     
     /** Checks if a position is free of walls on all sides. */
@@ -187,7 +198,7 @@ public abstract class Maze implements Serializable {
 
     /** Checks if a position is free of walls on all sides. */
     protected final boolean isClear(Position p) {
-        return isClear(p.x, p.y);
+        return isClear(p.getX(), p.getY());
     }
     
     /** Checks if a position is blocked by walls on all sides. */
@@ -197,7 +208,7 @@ public abstract class Maze implements Serializable {
 
     /** Checks if a position is blocked by walls on all sides. */
     protected final boolean isClosed(Position p) {
-        return isClosed(p.x, p.y);
+        return isClosed(p.getX(), p.getY());
     }
 
     /** Checks if a position is in maze bounds. */
@@ -231,8 +242,8 @@ public abstract class Maze implements Serializable {
     }
 
     /** Checks if a position is in bounds and throws an exception if it isn't. */
-    protected final void checkPosition(Position position) {        
-        checkPosition(position.x, position.y);
+    protected final void checkPosition(Position p) {        
+        checkPosition(p.getX(), p.getY());
     }
 
     /** Returns the flag bits for the specified position. */
@@ -242,7 +253,7 @@ public abstract class Maze implements Serializable {
 
     /** Returns the flag bits for the specified position. */
     protected final byte getFlags(Position p) {
-        return getFlags(p.x, p.y);
+        return getFlags(p.getX(), p.getY());
     }
 
     /** Sets the flag bits for the specified position. */
@@ -253,19 +264,14 @@ public abstract class Maze implements Serializable {
     
     /** Sets the flag bits for the specified position. */
     protected final void setFlags(Position p, byte flags) {
-        setFlags(p.x, p.y, flags);
+        setFlags(p.getX(), p.getY(), flags);
     }
     
-    /** Resets the flag bits for every position. */
+    /** Clears all flags. */
     protected final void resetFlags() {
         for (int i = 0; i < maze.length; ++i) {
             maze[i] &= WALL_MASK;
         }
-    }
-    
-    /** Returns a random position within the given dimensions. */
-    protected static Position randomPosition(int width, int height) {
-        return new Position(random(width), random(height));
     }
     
     /** Returns a random boolean. */
