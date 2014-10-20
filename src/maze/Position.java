@@ -30,6 +30,6 @@ public abstract class Position {
             Position p = (Position)obj;
             return getX() == p.getX() && getY() == p.getY();
         }
-        return super.equals(obj);
+        return false;
     }
 }
