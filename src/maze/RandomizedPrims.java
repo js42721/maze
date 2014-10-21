@@ -117,7 +117,7 @@ public class RandomizedPrims extends Maze implements Serializable {
             Collections.swap(frontiers, random, last); // For O(1) removal.
             Node current = frontiers.remove(last);
             
-            /* Picks randomly from the visited neighbors of the frontier. */
+            /* Picks a random visited neighbor of the frontier. */
             getVisitedNeighbors(current, neighbors);
             Direction d = neighbors.get(random(neighbors.size()));
             
