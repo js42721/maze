@@ -12,7 +12,7 @@ import java.util.List;
 public class Wilsons extends Maze implements Serializable {
     private static final long serialVersionUID = -3034136817254278367L;
     
-    private static final byte IN = 0b0100;
+    private static final int IN = 0b0100;
     
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
@@ -76,13 +76,13 @@ public class Wilsons extends Maze implements Serializable {
                 Direction d = moves.get(random(moves.size()));
 
                 /* Saves the node's exit direction. */
-                setFlags(walk, (byte)d.ordinal());
+                setFlags(walk, d.ordinal());
 
                 walk.translate(d.dx, d.dy);
             }
             
             trace.set(current);
-            byte flags = getFlags(trace);
+            int flags = getFlags(trace);
             
             /* Traces the path of the walk but avoids any loops. */
             while ((flags & IN) == 0) {

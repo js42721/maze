@@ -10,9 +10,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * for use by subclasses.
  */
 public abstract class Maze implements Serializable {
-    private static final long serialVersionUID = 5362218962430254596L;
+    private static final long serialVersionUID = -4078712705879675787L;
 
-    private static final byte WALL_MASK = 0b1111;
+    private static final int WALL_MASK = 0b1111;
     
     private final int width;
     private final int height;
@@ -128,7 +128,7 @@ public abstract class Maze implements Serializable {
     
     /** Fills the maze with walls and clears all flags. */
     protected final void resetFill() {
-        Arrays.fill(maze, WALL_MASK);
+        Arrays.fill(maze, (byte)WALL_MASK);
     }
 
     /** Creates the borders. */
@@ -218,7 +218,7 @@ public abstract class Maze implements Serializable {
     
     /** Checks if a border exists at the specified direction from a position. */
     protected final boolean isBorder(int x, int y, Direction d) {
-        byte validBorders = 0;
+        int validBorders = 0;
         if (y == 0) {
             validBorders |= Direction.UP.mask;
         } 
@@ -247,23 +247,23 @@ public abstract class Maze implements Serializable {
     }
 
     /** Returns the flag bits for the specified position. */
-    protected final byte getFlags(int x, int y) {
-        return (byte)(maze[y * width + x] >> 4);
+    protected final int getFlags(int x, int y) {
+        return (maze[y * width + x] >> 4);
     }
 
     /** Returns the flag bits for the specified position. */
-    protected final byte getFlags(Position p) {
+    protected final int getFlags(Position p) {
         return getFlags(p.getX(), p.getY());
     }
 
     /** Sets the flag bits for the specified position. */
-    protected final void setFlags(int x, int y, byte flags) {
+    protected final void setFlags(int x, int y, int flags) {
         int i = y * width + x;
         maze[i] = (byte)(maze[i] & WALL_MASK | flags << 4);
     }
     
     /** Sets the flag bits for the specified position. */
-    protected final void setFlags(Position p, byte flags) {
+    protected final void setFlags(Position p, int flags) {
         setFlags(p.getX(), p.getY(), flags);
     }
     
@@ -290,15 +290,15 @@ public abstract class Maze implements Serializable {
     }
     
     public enum Direction {
-        UP   ((byte)0b0001,  0, -1),
-        LEFT ((byte)0b0010, -1,  0),
-        DOWN ((byte)0b0100,  0,  1),
-        RIGHT((byte)0b1000,  1,  0);
+        UP   (0b0001,  0, -1),
+        LEFT (0b0010, -1,  0),
+        DOWN (0b0100,  0,  1),
+        RIGHT(0b1000,  1,  0);
         
         public final int dx;
         public final int dy;
 
-        private final byte mask;
+        private final int mask;
         private Direction reverse;
         
         static {
@@ -308,7 +308,7 @@ public abstract class Maze implements Serializable {
             RIGHT.reverse = LEFT;
         }
         
-        Direction(byte mask, int dx, int dy) {
+        Direction(int mask, int dx, int dy) {
             this.mask = mask;
             this.dx = dx;
             this.dy = dy;

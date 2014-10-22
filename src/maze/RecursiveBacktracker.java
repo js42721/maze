@@ -118,7 +118,7 @@ public class RecursiveBacktracker extends Maze implements Serializable {
             current.translate(d.dx, d.dy);
             
             /* Saves the direction taken to reach the current node. */
-            setFlags(current, (byte)d.ordinal());
+            setFlags(current, d.ordinal());
             
             --unvisited;
         }
