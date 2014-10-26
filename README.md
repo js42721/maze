@@ -1,8 +1,8 @@
 Maze Generator
 ==============
 
-This library contains fast implementations of several classic maze generation
-algorithms:
+This Java library contains fast implementations of several classic maze
+generation algorithms:
 
 * [Binary tree algorithm](src/maze/BinaryTreeMaze.java)
 * [Randomized Prim's algorithm](src/maze/RandomizedPrims.java)
