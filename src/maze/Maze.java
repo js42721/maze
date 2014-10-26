@@ -6,8 +6,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /** 
  * A two-dimensional maze representation. The walls of a maze node are stored
- * in four bit fields. Each node occupies a byte, leaving four bits available
- * for use by subclasses.
+ * as four bit fields. Each node is given a byte, leaving four unused bits per
+ * node. These unused bits are made accessible to subclasses since they can be
+ * useful when implementing maze generation algorithms that need to label
+ * nodes.
  */
 public abstract class Maze implements Serializable {
     private static final long serialVersionUID = -4078712705879675787L;
@@ -216,7 +218,7 @@ public abstract class Maze implements Serializable {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
     
-    /** Checks if a border exists at the specified direction from a position. */
+    /** Checks if a wall is a border. */
     protected final boolean isBorder(int x, int y, Direction d) {
         int validBorders = 0;
         if (y == 0) {
@@ -284,7 +286,7 @@ public abstract class Maze implements Serializable {
         return ThreadLocalRandom.current().nextInt(n);
     }
     
-    /** Returns a random integer in the range [m, n); */ 
+    /** Returns a random integer in the range [m, n). */ 
     protected static int random(int m, int n) {
         return ThreadLocalRandom.current().nextInt(m, n);
     }

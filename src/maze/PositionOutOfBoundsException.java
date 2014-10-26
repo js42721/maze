@@ -7,7 +7,7 @@ public class PositionOutOfBoundsException extends RuntimeException
         implements Serializable {
     
     private static final long serialVersionUID = -9142449090078209915L;
-
+    
     /** Constructs a {@code PositionOutOfBoundsException}. */
     public PositionOutOfBoundsException() {
         super();
