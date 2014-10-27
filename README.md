@@ -1,5 +1,5 @@
-Maze Generator
-==============
+Maze
+====
 
 This Java library contains fast implementations of several classic maze
 generation algorithms:
@@ -10,7 +10,7 @@ generation algorithms:
 * [Recursive division](src/maze/RecursiveDivider.java)
 * [Wilson's algorithm](src/maze/Wilsons.java)
 
-It includes a [tile maze wrapper](src/maze/TileMaze.java) which provides a
+It also includes a [tile maze wrapper](src/maze/TileMaze.java) which provides a
 tile-centric interface.
 
 A maze generated using recursive backtracking:
