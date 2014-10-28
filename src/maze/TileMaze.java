@@ -68,8 +68,8 @@ public class TileMaze implements Serializable {
      */
     public boolean isWall(int x, int y) {
         checkBounds(x, y);
-        boolean xEven = (x % 2 == 0);
-        boolean yEven = (y % 2 == 0);
+        boolean xEven = (x & 1) == 0;
+        boolean yEven = (y & 1) == 0;
         if (xEven && yEven) { // Even-even means wall.
             return true;
         }
