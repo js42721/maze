@@ -92,7 +92,7 @@ public abstract class Maze implements Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append("+");
         for (int x = 0; x < width; ++x) {
-            if (isWall(x, 0, Direction.UP)) {
+            if ((maze[x] & Direction.UP.mask) != 0) {
                 builder.append("---+");
             } else {
                 builder.append("   +");
@@ -101,7 +101,7 @@ public abstract class Maze implements Serializable {
         builder.append(lineSeparator);
         for (int y = 0; y < height; ++y) {
             int offset = y * width;
-            if (isWall(0, y, Direction.LEFT)) {
+            if ((maze[offset] & Direction.LEFT.mask) != 0) {
                 builder.append("|");
             } else {
                 builder.append(" ");
