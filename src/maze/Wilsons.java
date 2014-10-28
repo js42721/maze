@@ -12,7 +12,8 @@ import java.util.List;
 public class Wilsons extends Maze implements Serializable {
     private static final long serialVersionUID = -3034136817254278367L;
     
-    private static final int IN = 0b0100;
+    /* The first two bits are reserved for directions. */
+    private static final int IN = 1 << 2;
     
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.

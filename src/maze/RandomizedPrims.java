@@ -17,9 +17,9 @@ import java.util.List;
 public class RandomizedPrims extends Maze implements Serializable {
     private static final long serialVersionUID = 7747472214454525445L;
     
-    private static final int OUT      = 0b0000;
-    private static final int IN       = 0b0001;
-    private static final int FRONTIER = 0b0010;
+    private static final int OUT      = 0;
+    private static final int IN       = 1 << 0;
+    private static final int FRONTIER = 1 << 1;
     
     private Node start;
     

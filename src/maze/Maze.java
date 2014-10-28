@@ -2,7 +2,7 @@ package maze;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 /** 
  * A two-dimensional maze representation. The walls of a maze node are stored
@@ -10,15 +10,20 @@ import java.util.concurrent.ThreadLocalRandom;
  * node. These unused bits are made accessible to subclasses since they can be
  * useful when implementing maze generation algorithms that need to label
  * nodes.
+ * 
+ * The PRNG code is from http://www.jstatsoft.org/v08/i14/paper.
  */
 public abstract class Maze implements Serializable {
-    private static final long serialVersionUID = -4078712705879675787L;
+    private static final long serialVersionUID = 1078109759501209143L;
 
-    private static final int WALL_MASK = 0b1111;
+    private static final int WALL_MASK = 0xf;
     
     private final int width;
     private final int height;
     private final byte[] maze;
+    
+    /** For the internal PRNG. */
+    private int seed;
     
     /**
      * Sets the dimensions.
@@ -34,6 +39,10 @@ public abstract class Maze implements Serializable {
         this.width = width;
         this.height = height;
         maze = new byte[width * height];
+        seed = new Random().nextInt();
+        if (seed == 0) {
+            seed = -1; // Must not be zero.
+        }
     }
 
     /** Generates the maze. */
@@ -79,15 +88,24 @@ public abstract class Maze implements Serializable {
     
     @Override
     public String toString() {
+        String lineSeparator = System.getProperty("line.separator");
         StringBuilder builder = new StringBuilder();
         builder.append("+");
         for (int x = 0; x < width; ++x) {
-            builder.append("---+");
+            if (isWall(x, 0, Direction.UP)) {
+                builder.append("---+");
+            } else {
+                builder.append("   +");
+            }
         }
-        builder.append(System.lineSeparator());
+        builder.append(lineSeparator);
         for (int y = 0; y < height; ++y) {
             int offset = y * width;
-            builder.append("|");
+            if (isWall(0, y, Direction.LEFT)) {
+                builder.append("|");
+            } else {
+                builder.append(" ");
+            }
             for (int x = 0; x < width; ++x) {
                 if ((maze[offset + x] & Direction.RIGHT.mask) != 0) {
                     builder.append("   |");
@@ -95,7 +113,7 @@ public abstract class Maze implements Serializable {
                     builder.append("    ");
                 }
             }
-            builder.append(System.lineSeparator());
+            builder.append(lineSeparator);
             builder.append("+");
             for (int x = 0; x < width; ++x) {
                 if ((maze[offset + x] & Direction.DOWN.mask) != 0) {
@@ -104,7 +122,7 @@ public abstract class Maze implements Serializable {
                     builder.append("   +");
                 }
             }
-            builder.append(System.lineSeparator());
+            builder.append(lineSeparator);
         }
         return builder.toString();
     }
@@ -277,25 +295,38 @@ public abstract class Maze implements Serializable {
     }
     
     /** Returns a random boolean. */
-    protected static boolean coinToss() {
-        return ThreadLocalRandom.current().nextBoolean();
+    protected final boolean coinToss() {
+        return (nextInt() & 1) != 0;
     }
     
     /** Returns a random integer in the range [0, n). */
-    protected static int random(int n) {
-        return ThreadLocalRandom.current().nextInt(n);
+    protected final int random(int n) {   
+        int random, result;
+        do {
+            random = nextInt() >>> 1;
+            result = random % n;
+        } while (random - result + (n - 1) < 0);
+        return result;
     }
     
     /** Returns a random integer in the range [m, n). */ 
-    protected static int random(int m, int n) {
-        return ThreadLocalRandom.current().nextInt(m, n);
+    protected final int random(int m, int n) {
+        return random(n - m) + m;
+    }
+    
+    /** Returns the next pseudorandom integer. */
+    private int nextInt() {
+        int x = seed;
+        x ^= x << 13;
+        x ^= x >>> 17;
+        return seed = x ^= x << 5;
     }
     
     public enum Direction {
-        UP   (0b0001,  0, -1),
-        LEFT (0b0010, -1,  0),
-        DOWN (0b0100,  0,  1),
-        RIGHT(0b1000,  1,  0);
+        UP   (1 << 0,  0, -1),
+        LEFT (1 << 1, -1,  0),
+        DOWN (1 << 2,  0,  1),
+        RIGHT(1 << 3,  1,  0);
         
         public final int dx;
         public final int dy;
@@ -321,3 +352,4 @@ public abstract class Maze implements Serializable {
         }
     }
 }
+
