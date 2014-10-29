@@ -268,7 +268,7 @@ public abstract class Maze implements Serializable {
 
     /** Returns the flag bits for the specified position. */
     protected final int getFlags(int x, int y) {
-        return (maze[y * width + x] >> 4);
+        return maze[y * width + x] >>> 4;
     }
 
     /** Returns the flag bits for the specified position. */
@@ -352,4 +352,3 @@ public abstract class Maze implements Serializable {
         }
     }
 }
-
