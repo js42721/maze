@@ -1,9 +1,6 @@
 package maze;
 
-import java.awt.Rectangle;
 import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 /**
  * Implements the recursive division algorithm. The algorithm starts with an
@@ -31,56 +28,47 @@ public class RecursiveDivider extends Maze implements Serializable {
     public void generate() {
         reset();
         addBorders();
-        recursiveDivision();
+        recursiveDivision(0, 0, getWidth(), getHeight());
     }
     
-    private void recursiveDivision() {
-        Deque<Rectangle> stack = new ArrayDeque<Rectangle>();
-        stack.push(new Rectangle(0, 0, getWidth(), getHeight()));
-        
-        while (!stack.isEmpty()) {
-            Rectangle r = stack.pop();
-            
-            if (r.width < 2 || r.height < 2) {
-                continue;
-            }
-
-            int endX = r.x + r.width;
-            int endY = r.y + r.height;
-            
-            /* The two subsections. */
-            Rectangle a = new Rectangle(r.x, r.y, 0, 0);
-            Rectangle b = new Rectangle();
-
-            if (getOrientation(r.width, r.height) == HORIZONTAL) {
-                int y = random(r.y, endY - 1); // Picks a random location.
-                for (int x = r.x; x < endX; ++x) { // Places the wall.
-                    addWall(x, y, Direction.DOWN);
-                }
-                carve(random(r.x, endX), y, Direction.DOWN); // Makes an opening.
-                b.x = r.x;
-                b.y = y + 1;
-                b.width = r.width;
-                b.height = endY - y - 1;
-                a.width = r.width;
-                a.height = b.y - r.y;
-            } else { // Perpendicular version of the above.
-                int x = random(r.x, endX - 1);
-                for (int y = r.y; y < endY; ++y) {
-                    addWall(x, y, Direction.RIGHT);
-                }
-                carve(x, random(r.y, endY), Direction.RIGHT);
-                b.x = x + 1;
-                b.y = r.y;
-                b.width = endX - x - 1;
-                b.height = r.height;
-                a.width = b.x - r.x;
-                a.height = r.height;
-            }
-            
-            stack.push(b);
-            stack.push(a);
+    private void recursiveDivision(int x, int y, int width, int height) {
+        if (width < 2 || height < 2) {
+            return;
         }
+        
+        int aw, ah;
+        int bx, by, bw, bh;
+
+        if (getOrientation(width, height) == HORIZONTAL) {
+            int tx = x + width, ty = y + height;
+            int wy = random(y, ty - 1); // Picks a random location.
+            for (int wx = x; wx < tx; ++wx) { // Places the wall.
+                addWall(wx, wy, Direction.DOWN);
+            }
+            carve(random(x, tx), wy, Direction.DOWN); // Makes an opening.
+            bx = x;
+            by = wy + 1;
+            bw = width;
+            bh = ty - wy - 1;
+            aw = width;
+            ah = by - y;
+        } else { // Perpendicular version of the above.
+            int tx = x + width, ty = y + height;
+            int wx = random(x, tx - 1);
+            for (int wy = y; wy < ty; ++wy) {
+                addWall(wx, wy, Direction.RIGHT);
+            }
+            carve(wx, random(y, ty), Direction.RIGHT);
+            bx = wx + 1;
+            by = y;
+            bw = tx - wx - 1;
+            bh = height;
+            aw = bx - x;
+            ah = height;
+        }
+        
+        recursiveDivision(x, y, aw, ah);
+        recursiveDivision(bx, by, bw, bh);
     }
     
     /** Chooses wall orientation based on the dimensions of an area. */
