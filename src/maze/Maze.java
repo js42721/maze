@@ -14,7 +14,7 @@ import java.util.Random;
  * The PRNG code is from http://www.jstatsoft.org/v08/i14/paper.
  */
 public abstract class Maze implements Serializable {
-    private static final long serialVersionUID = 1078109759501209143L;
+    private static final long serialVersionUID = -7765392224819741754L;
 
     private static final int WALL_MASK = 0xf;
     
@@ -22,8 +22,8 @@ public abstract class Maze implements Serializable {
     private final int height;
     private final byte[] maze;
     
-    /** For the internal PRNG. */
-    private int seed;
+    /** Internal PRNG state. */
+    private int rnd;
     
     /**
      * Sets the dimensions.
@@ -39,9 +39,9 @@ public abstract class Maze implements Serializable {
         this.width = width;
         this.height = height;
         maze = new byte[width * height];
-        seed = new Random().nextInt();
-        if (seed == 0) {
-            seed = -1; // Must not be zero.
+        rnd = new Random().nextInt(); // Seeds the PRNG.
+        if (rnd == 0) {
+            rnd = -1; // Must not be zero.
         }
     }
 
@@ -165,6 +165,7 @@ public abstract class Maze implements Serializable {
     
     /** Places a wall between two positions. */
     protected final void addWall(int x, int y, Direction d) {
+        assert !isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is a border";
         maze[y * width + x] |= d.mask;
         maze[(y + d.dy) * width + x + d.dx] |= d.getReverse().mask;
     }
@@ -176,6 +177,7 @@ public abstract class Maze implements Serializable {
     
     /** Removes the wall between two positions. */
     protected final void carve(int x, int y, Direction d) {
+        assert !isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is a border";
         maze[y * width + x] &= ~d.mask;
         maze[(y + d.dy) * width + x + d.dx] &= ~d.getReverse().mask;
     }
@@ -187,9 +189,7 @@ public abstract class Maze implements Serializable {
 
     /** Adds a wall to the borders. */
     protected final void addBorder(int x, int y, Direction d) {
-        if (!isBorder(x, y, d)) {
-            throw new IllegalArgumentException("Not a valid border");
-        }
+        assert isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is not a border";
         maze[y * width + x] |= d.mask;
     }
 
@@ -200,9 +200,7 @@ public abstract class Maze implements Serializable {
 
     /** Removes a wall from the borders. */
     protected final void removeBorder(int x, int y, Direction d) {
-        if (!isBorder(x, y, d)) {
-            throw new IllegalArgumentException("Not a valid border");
-        }
+        assert isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is not a border";
         maze[y * width + x] &= ~d.mask;
     }
 
@@ -213,6 +211,7 @@ public abstract class Maze implements Serializable {
     
     /** Checks if a position is free of walls on all sides. */
     protected final boolean isClear(int x, int y) {
+        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
         return (maze[y * width + x] & WALL_MASK) == 0;
     }
 
@@ -223,6 +222,7 @@ public abstract class Maze implements Serializable {
     
     /** Checks if a position is blocked by walls on all sides. */
     protected final boolean isClosed(int x, int y) {
+        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
         return (maze[y * width + x] & WALL_MASK) == WALL_MASK;
     }
 
@@ -230,14 +230,10 @@ public abstract class Maze implements Serializable {
     protected final boolean isClosed(Position p) {
         return isClosed(p.getX(), p.getY());
     }
-
-    /** Checks if a position is in maze bounds. */
-    protected final boolean isInBounds(int x, int y) {
-        return x >= 0 && x < width && y >= 0 && y < height;
-    }
     
     /** Checks if a wall is a border. */
     protected final boolean isBorder(int x, int y, Direction d) {
+        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
         int validBorders = 0;
         if (y == 0) {
             validBorders |= Direction.UP.mask;
@@ -254,6 +250,11 @@ public abstract class Maze implements Serializable {
         return (validBorders & d.mask) != 0;
     }
 
+    /** Checks if a position is in maze bounds. */
+    protected final boolean isInBounds(int x, int y) {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
     /** Checks if a position is in bounds and throws an exception if it isn't. */
     protected final void checkPosition(int x, int y) {
         if (!isInBounds(x, y)) {
@@ -261,13 +262,9 @@ public abstract class Maze implements Serializable {
         }
     }
 
-    /** Checks if a position is in bounds and throws an exception if it isn't. */
-    protected final void checkPosition(Position p) {        
-        checkPosition(p.getX(), p.getY());
-    }
-
     /** Returns the flag bits for the specified position. */
     protected final int getFlags(int x, int y) {
+        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
         return maze[y * width + x] >>> 4;
     }
 
@@ -278,6 +275,7 @@ public abstract class Maze implements Serializable {
 
     /** Sets the flag bits for the specified position. */
     protected final void setFlags(int x, int y, int flags) {
+        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
         int i = y * width + x;
         maze[i] = (byte)(maze[i] & WALL_MASK | flags << 4);
     }
@@ -300,26 +298,27 @@ public abstract class Maze implements Serializable {
     }
     
     /** Returns a random integer in the range [0, n). */
-    protected final int random(int n) {   
+    protected final int random(int n) {
+        assert n > 0 : "n must be positive";
         int random, result;
         do {
             random = nextInt() >>> 1;
             result = random % n;
-        } while (random - result + (n - 1) < 0);
+        } while (random - result + n - 1 < 0);
         return result;
     }
     
     /** Returns a random integer in the range [m, n). */ 
     protected final int random(int m, int n) {
+        assert n > m : "n must be greater than m";
         return random(n - m) + m;
     }
     
     /** Returns the next pseudorandom integer. */
     private int nextInt() {
-        int x = seed;
-        x ^= x << 13;
-        x ^= x >>> 17;
-        return seed = x ^= x << 5;
+        rnd ^= rnd << 13;
+        rnd ^= rnd >>> 17;
+        return rnd ^= rnd << 5;
     }
     
     public enum Direction {

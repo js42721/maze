@@ -13,8 +13,8 @@ public class BinaryTreeMaze extends Maze implements Serializable {
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
      * 
-     * @param width the width of the maze
-     * @param height the height of the maze
+     * @param  width the width of the maze
+     * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
      */
     public BinaryTreeMaze(int width, int height) {
