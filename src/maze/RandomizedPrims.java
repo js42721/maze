@@ -162,16 +162,16 @@ public class RandomizedPrims extends Maze implements Serializable {
     /** Gets the directions pointing to the visited neighbors of a node. */
     private int getVisitedNeighbors(Node n, Direction[] neighbors) {
         int count = 0;
-        if (n.y > 0 && (getFlags(n.x, n.y - 1) & IN) != 0) {
+        if (n.y > 0 && getFlags(n.x, n.y - 1) == IN) {
             neighbors[count++] = Direction.UP;
         }
-        if (n.x > 0 && (getFlags(n.x - 1, n.y) & IN) != 0) {
+        if (n.x > 0 && getFlags(n.x - 1, n.y) == IN) {
             neighbors[count++] = Direction.LEFT;
         }
-        if (n.y < getHeight() - 1 && (getFlags(n.x, n.y + 1) & IN) != 0) {
+        if (n.y < getHeight() - 1 && getFlags(n.x, n.y + 1) == IN) {
             neighbors[count++] = Direction.DOWN;
         }
-        if (n.x < getWidth() - 1 && (getFlags(n.x + 1, n.y) & IN) != 0) {
+        if (n.x < getWidth() - 1 && getFlags(n.x + 1, n.y) == IN) {
             neighbors[count++] = Direction.RIGHT;
         }
         return count;

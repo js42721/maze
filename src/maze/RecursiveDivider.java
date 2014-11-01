@@ -32,7 +32,7 @@ public class RecursiveDivider extends Maze implements Serializable {
     }
     
     private void recursiveDivision(int x, int y, int width, int height) {
-        if (width < 2 || height < 2) {
+        if (width <= 1 || height <= 1) {
             return;
         }
         

@@ -70,7 +70,7 @@ public class Wilsons extends Maze implements Serializable {
             walk.set(current);
             
             /* Walks randomly until a visited node is found. */
-            while ((getFlags(walk) & IN) == 0) {
+            while (getFlags(walk) != IN) {
                 int moveCount = getMoves(walk, moves);
                 Direction d = moves[random(moveCount)];
 
@@ -84,7 +84,7 @@ public class Wilsons extends Maze implements Serializable {
             int flags = getFlags(trace);
             
             /* Traces the path of the walk but avoids any loops. */
-            while ((flags & IN) == 0) {
+            while (flags != IN) {
                 /* Carves along the saved exit direction. */
                 Direction d = directions[flags];
                 carve(trace, d);
@@ -99,7 +99,7 @@ public class Wilsons extends Maze implements Serializable {
             /* Finds the next unvisited node. */
             while (i >= 0) {
                 current.set(i % getWidth(), i / getWidth());
-                if ((getFlags(current) & IN) == 0) {
+                if (getFlags(current) != IN) {
                     break;
                 }
                 --i;
