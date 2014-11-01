@@ -104,7 +104,7 @@ public class RandomizedPrims extends Maze implements Serializable {
     private void randomizedPrims(Node start) {
         /* Frontiers are the unvisited nodes adjacent to the visited ones. */
         List<Node> frontiers = new ArrayList<Node>();
-        List<Direction> neighbors = new ArrayList<Direction>(4);
+        Direction[] neighbors = new Direction[4];
         
         /* Marks the starting node as visited and gets its frontiers. */
         setFlags(start, IN);
@@ -118,8 +118,8 @@ public class RandomizedPrims extends Maze implements Serializable {
             Node current = frontiers.remove(last);
             
             /* Picks a random visited neighbor of the frontier. */
-            getVisitedNeighbors(current, neighbors);
-            Direction d = neighbors.get(random(neighbors.size()));
+            int neighborCount = getVisitedNeighbors(current, neighbors);
+            Direction d = neighbors[random(neighborCount)];
             
             /* 
              * Removes the wall between the frontier and the selected neighbor
@@ -160,19 +160,20 @@ public class RandomizedPrims extends Maze implements Serializable {
     }
     
     /** Gets the directions pointing to the visited neighbors of a node. */
-    private void getVisitedNeighbors(Node n, List<Direction> neighbors) {
-        neighbors.clear();
+    private int getVisitedNeighbors(Node n, Direction[] neighbors) {
+        int count = 0;
         if (n.y > 0 && (getFlags(n.x, n.y - 1) & IN) != 0) {
-            neighbors.add(Direction.UP);
+            neighbors[count++] = Direction.UP;
         }
         if (n.x > 0 && (getFlags(n.x - 1, n.y) & IN) != 0) {
-            neighbors.add(Direction.LEFT);
+            neighbors[count++] = Direction.LEFT;
         }
         if (n.y < getHeight() - 1 && (getFlags(n.x, n.y + 1) & IN) != 0) {
-            neighbors.add(Direction.DOWN);
+            neighbors[count++] = Direction.DOWN;
         }
         if (n.x < getWidth() - 1 && (getFlags(n.x + 1, n.y) & IN) != 0) {
-            neighbors.add(Direction.RIGHT);
+            neighbors[count++] = Direction.RIGHT;
         }
+        return count;
     }
 }

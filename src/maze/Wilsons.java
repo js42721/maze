@@ -1,8 +1,6 @@
 package maze;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implements Wilson's algorithm. The algorithm creates a uniform spanning
@@ -57,7 +55,7 @@ public class Wilsons extends Maze implements Serializable {
      */
     private void wilson() {
         Direction[] directions = Direction.values();
-        List<Direction> moves = new ArrayList<Direction>(4);
+        Direction[] moves = new Direction[4];
         Node walk = new Node();
         Node trace = new Node();
         int i = getWidth() * getHeight() - 2;
@@ -73,8 +71,8 @@ public class Wilsons extends Maze implements Serializable {
             
             /* Walks randomly until a visited node is found. */
             while ((getFlags(walk) & IN) == 0) {
-                getMoves(walk, moves);
-                Direction d = moves.get(random(moves.size()));
+                int moveCount = getMoves(walk, moves);
+                Direction d = moves[random(moveCount)];
 
                 /* Saves the node's exit direction. */
                 setFlags(walk, d.ordinal());
@@ -110,19 +108,20 @@ public class Wilsons extends Maze implements Serializable {
     }
     
     /** Gets the moves that can be made from a node. */
-    private void getMoves(Node n, List<Direction> moves) {
-        moves.clear();
+    private int getMoves(Node n, Direction[] moves) {
+        int count = 0;
         if (n.y > 0) {
-            moves.add(Direction.UP);
+            moves[count++] = Direction.UP;
         }
         if (n.x > 0) {
-            moves.add(Direction.LEFT);
+            moves[count++] = Direction.LEFT;
         }
         if (n.y < getHeight() - 1) {
-            moves.add(Direction.DOWN);
+            moves[count++] = Direction.DOWN;
         }
         if (n.x < getWidth() - 1) {
-            moves.add(Direction.RIGHT);
+            moves[count++] = Direction.RIGHT;
         }
+        return count;
     }
 }

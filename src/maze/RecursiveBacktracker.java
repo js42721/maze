@@ -1,8 +1,6 @@
 package maze;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /** 
  * Implements the recursive backtracking algorithm. The algorithm works by
@@ -93,17 +91,17 @@ public class RecursiveBacktracker extends Maze implements Serializable {
     
     private void recursiveBacktrack(Node start) {
         Direction[] directions = Direction.values();
-        List<Direction> moves = new ArrayList<Direction>(4);
+        Direction[] moves = new Direction[4];
         int unvisited = getWidth() * getHeight() - 1;
         
         Node current = new Node(start);
         
         while (unvisited > 0) {
             /* Finds adjacent unvisited nodes. */
-            getMoves(current, moves);
+            int moveCount = getMoves(current, moves);
             
             /* Takes a step back if there are no such nodes. */
-            if (moves.isEmpty()) {
+            if (moveCount == 0) {
                 /* Moves in the reverse of the saved direction. */
                 Direction rev = directions[getFlags(current)].getReverse();
                 current.translate(rev.dx, rev.dy);
@@ -111,7 +109,7 @@ public class RecursiveBacktracker extends Maze implements Serializable {
             }
             
             /* Picks a random adjacent unvisited node and adds it to the maze. */
-            Direction d = moves.get(random(moves.size()));
+            Direction d = moves[random(moveCount)];
             carve(current, d);
             
             /* Updates the current node to the newly added node. */
@@ -123,21 +121,22 @@ public class RecursiveBacktracker extends Maze implements Serializable {
             --unvisited;
         }
     }
-
+    
     /** Gets the directions which point to adjacent unvisited nodes. */
-    private void getMoves(Node n, List<Direction> moves) {
-        moves.clear();
+    private int getMoves(Node n, Direction[] moves) {
+        int count = 0;
         if (n.y > 0 && isClosed(n.x, n.y - 1)) {
-            moves.add(Direction.UP);
+            moves[count++] = Direction.UP;
         }
         if (n.x > 0 && isClosed(n.x - 1, n.y)) {
-            moves.add(Direction.LEFT);
+            moves[count++] = Direction.LEFT;
         }
         if (n.y < getHeight() - 1 && isClosed(n.x, n.y + 1)) {
-            moves.add(Direction.DOWN);
+            moves[count++] = Direction.DOWN;
         }
         if (n.x < getWidth() - 1 && isClosed(n.x + 1, n.y)) {
-            moves.add(Direction.RIGHT);
+            moves[count++] = Direction.RIGHT;
         }
+        return count;
     }
 }
