@@ -8,8 +8,10 @@ import java.io.Serializable;
  * where the two carving directions converge.
  */
 public class BinaryTreeMaze extends Maze implements Serializable {
-    private static final long serialVersionUID = -8719576526379394919L;
-
+    private static final long serialVersionUID = 1258049332970664669L;
+    
+    private final FastRandom rnd;
+    
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
      * 
@@ -19,6 +21,7 @@ public class BinaryTreeMaze extends Maze implements Serializable {
      */
     public BinaryTreeMaze(int width, int height) {
         super(width, height);
+        rnd = new FastRandom();
     }
 
     @Override
@@ -31,7 +34,7 @@ public class BinaryTreeMaze extends Maze implements Serializable {
     private void binaryTreeMaze() {        
         for (int y = 1; y < getHeight(); ++y) {
             for (int x = 1; x < getWidth(); ++x) {
-                addWall(x, y, coinToss() ? Direction.LEFT : Direction.UP);
+                addWall(x, y, rnd.nextBoolean() ? Direction.LEFT : Direction.UP);
             }
         }
     }

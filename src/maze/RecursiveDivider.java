@@ -8,10 +8,12 @@ import java.io.Serializable;
  * horizontal or vertical wall.
  */
 public class RecursiveDivider extends Maze implements Serializable {
-    private static final long serialVersionUID = -758182684038944859L;
+    private static final long serialVersionUID = -5814220178180152877L;
     
     private static final boolean HORIZONTAL = true;
     private static final boolean VERTICAL   = false;
+    
+    private final FastRandom rnd;
     
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
@@ -22,6 +24,7 @@ public class RecursiveDivider extends Maze implements Serializable {
      */
     public RecursiveDivider(int width, int height) {
         super(width, height);
+        rnd = new FastRandom();
     }
     
     @Override
@@ -41,11 +44,11 @@ public class RecursiveDivider extends Maze implements Serializable {
 
         if (getOrientation(width, height) == HORIZONTAL) {
             int tx = x + width, ty = y + height;
-            int wy = random(y, ty - 1); // Picks a random location.
+            int wy = rnd.nextInt(y, ty - 1); // Picks a random location.
             for (int wx = x; wx < tx; ++wx) { // Places the wall.
                 addWall(wx, wy, Direction.DOWN);
             }
-            carve(random(x, tx), wy, Direction.DOWN); // Makes an opening.
+            carve(rnd.nextInt(x, tx), wy, Direction.DOWN); // Makes an opening.
             bx = x;
             by = wy + 1;
             bw = width;
@@ -54,11 +57,11 @@ public class RecursiveDivider extends Maze implements Serializable {
             ah = by - y;
         } else { // Perpendicular version of the above.
             int tx = x + width, ty = y + height;
-            int wx = random(x, tx - 1);
+            int wx = rnd.nextInt(x, tx - 1);
             for (int wy = y; wy < ty; ++wy) {
                 addWall(wx, wy, Direction.RIGHT);
             }
-            carve(wx, random(y, ty), Direction.RIGHT);
+            carve(wx, rnd.nextInt(y, ty), Direction.RIGHT);
             bx = wx + 1;
             by = y;
             bw = tx - wx - 1;
@@ -79,6 +82,6 @@ public class RecursiveDivider extends Maze implements Serializable {
         if (height > width * 2) {
             return HORIZONTAL;
         }
-        return coinToss();
+        return rnd.nextBoolean();
     }
 }

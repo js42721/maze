@@ -2,7 +2,6 @@ package maze;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Random;
 
 /** 
  * A two-dimensional maze representation. The walls of a maze node are stored
@@ -10,20 +9,15 @@ import java.util.Random;
  * node. These unused bits are made accessible to subclasses since they can be
  * useful when implementing maze generation algorithms that need to label
  * nodes.
- * 
- * The PRNG code is from http://www.jstatsoft.org/v08/i14/paper.
  */
 public abstract class Maze implements Serializable {
-    private static final long serialVersionUID = -7765392224819741754L;
+    private static final long serialVersionUID = 6114059191423368387L;
 
     private static final int WALL_MASK = 0xf;
     
     private final int width;
     private final int height;
     private final byte[] maze;
-    
-    /** Internal PRNG state. */
-    private int rnd;
     
     /**
      * Sets the dimensions.
@@ -39,10 +33,6 @@ public abstract class Maze implements Serializable {
         this.width = width;
         this.height = height;
         maze = new byte[width * height];
-        rnd = new Random().nextInt(); // Seeds the PRNG.
-        if (rnd == 0) {
-            rnd = -1; // Must not be zero.
-        }
     }
 
     /** Generates the maze. */
@@ -290,35 +280,6 @@ public abstract class Maze implements Serializable {
         for (int i = 0; i < maze.length; ++i) {
             maze[i] &= WALL_MASK;
         }
-    }
-    
-    /** Returns a random boolean. */
-    protected final boolean coinToss() {
-        return (nextInt() & 1) != 0;
-    }
-    
-    /** Returns a random integer in the range [0, n). */
-    protected final int random(int n) {
-        assert n > 0 : "n must be positive";
-        int random, result;
-        do {
-            random = nextInt() >>> 1;
-            result = random % n;
-        } while (random - result + n - 1 < 0);
-        return result;
-    }
-    
-    /** Returns a random integer in the range [m, n). */ 
-    protected final int random(int m, int n) {
-        assert n > m : "n must be greater than m";
-        return random(n - m) + m;
-    }
-    
-    /** Returns the next pseudorandom integer. */
-    private int nextInt() {
-        rnd ^= rnd << 13;
-        rnd ^= rnd >>> 17;
-        return rnd ^= rnd << 5;
     }
     
     public enum Direction {

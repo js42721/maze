@@ -8,10 +8,12 @@ import java.io.Serializable;
  * by performing loop-erased random walks.
  */
 public class Wilsons extends Maze implements Serializable {
-    private static final long serialVersionUID = -3034136817254278367L;
-    
+    private static final long serialVersionUID = -6005323969001295290L;
+
     /* The first two bits are reserved for directions. */
     private static final int IN = 1 << 2;
+    
+    private final FastRandom rnd;
     
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
@@ -22,6 +24,7 @@ public class Wilsons extends Maze implements Serializable {
      */
     public Wilsons(int width, int height) {
         super(width, height);
+        rnd = new FastRandom();
     }
     
     @Override
@@ -72,7 +75,7 @@ public class Wilsons extends Maze implements Serializable {
             /* Walks randomly until a visited node is found. */
             while (getFlags(walk) != IN) {
                 int moveCount = getMoves(walk, moves);
-                Direction d = moves[random(moveCount)];
+                Direction d = moves[rnd.nextInt(moveCount)];
 
                 /* Saves the node's exit direction. */
                 setFlags(walk, d.ordinal());

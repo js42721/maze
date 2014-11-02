@@ -7,9 +7,10 @@ import java.io.Serializable;
  * exploring unvisited nodes using randomized depth-first search.
  */
 public class RecursiveBacktracker extends Maze implements Serializable {
-    private static final long serialVersionUID = 2155816886742145694L;
+    private static final long serialVersionUID = -9213468305268100310L;
     
-    private Node start;
+    private final FastRandom rnd;
+    private final Node start;
     
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
@@ -20,7 +21,8 @@ public class RecursiveBacktracker extends Maze implements Serializable {
      */
     public RecursiveBacktracker(int width, int height) {
         super(width, height);
-        start = new Node(random(width), random(height));
+        rnd = new FastRandom();
+        start = new Node(rnd.nextInt(width), rnd.nextInt(height));
     }
     
     /**
@@ -38,6 +40,7 @@ public class RecursiveBacktracker extends Maze implements Serializable {
         super(width, height);
         checkPosition(startX, startY);
         start = new Node(startX, startY);
+        rnd = new FastRandom();
     }
     
     /**
@@ -109,7 +112,7 @@ public class RecursiveBacktracker extends Maze implements Serializable {
             }
             
             /* Picks a random adjacent unvisited node and adds it to the maze. */
-            Direction d = moves[random(moveCount)];
+            Direction d = moves[rnd.nextInt(moveCount)];
             carve(current, d);
             
             /* Updates the current node to the newly added node. */

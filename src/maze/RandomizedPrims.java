@@ -15,13 +15,14 @@ import java.util.List;
  * spanning tree.
  */
 public class RandomizedPrims extends Maze implements Serializable {
-    private static final long serialVersionUID = 7747472214454525445L;
+    private static final long serialVersionUID = 5070605213134281511L;
     
     private static final int OUT      = 0;
     private static final int IN       = 1 << 0;
     private static final int FRONTIER = 1 << 1;
     
-    private Node start;
+    private final FastRandom rnd;
+    private final Node start;
     
     /**
      * Sets the dimensions. Call {@link #generate} to generate the maze.
@@ -32,7 +33,8 @@ public class RandomizedPrims extends Maze implements Serializable {
      */
     public RandomizedPrims(int width, int height) {
         super(width, height);
-        start = new Node(random(width), random(height));
+        rnd = new FastRandom();
+        start = new Node(rnd.nextInt(width), rnd.nextInt(height));
     }
     
     /**
@@ -50,6 +52,7 @@ public class RandomizedPrims extends Maze implements Serializable {
         super(width, height);
         checkPosition(startX, startY);
         start = new Node(startX, startY);
+        rnd = new FastRandom();
     }
     
     /**
@@ -112,14 +115,14 @@ public class RandomizedPrims extends Maze implements Serializable {
         
         while (!frontiers.isEmpty()) {
             /* Picks a random frontier. */
-            int random = random(frontiers.size());
+            int random = rnd.nextInt(frontiers.size());
             int last = frontiers.size() - 1;
             Collections.swap(frontiers, random, last); // For O(1) removal.
             Node current = frontiers.remove(last);
             
             /* Picks a random visited neighbor of the frontier. */
             int neighborCount = getVisitedNeighbors(current, neighbors);
-            Direction d = neighbors[random(neighborCount)];
+            Direction d = neighbors[rnd.nextInt(neighborCount)];
             
             /* 
              * Removes the wall between the frontier and the selected neighbor
