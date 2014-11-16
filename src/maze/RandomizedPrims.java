@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import fastrandom.FastRandom;
+import fastrandom.LFib4;
+
 /** 
  * Implements a randomized version of Prim's algorithm. This algorithm is not
  * to be confused with regular Prim's algorithm with random weights. While
@@ -15,7 +18,7 @@ import java.util.List;
  * spanning tree.
  */
 public class RandomizedPrims extends Maze implements Serializable {
-    private static final long serialVersionUID = 5070605213134281511L;
+    private static final long serialVersionUID = 1761553893140412668L;
     
     private static final int OUT      = 0;
     private static final int IN       = 1 << 0;
@@ -25,7 +28,7 @@ public class RandomizedPrims extends Maze implements Serializable {
     private final Node start;
     
     /**
-     * Sets the dimensions. Call {@link #generate} to generate the maze.
+     * Sets the dimensions. Call {code generate} to generate the maze.
      * 
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -33,13 +36,13 @@ public class RandomizedPrims extends Maze implements Serializable {
      */
     public RandomizedPrims(int width, int height) {
         super(width, height);
-        rnd = new FastRandom();
+        rnd = new LFib4();
         start = new Node(rnd.nextInt(width), rnd.nextInt(height));
     }
     
     /**
-     * Sets the dimensions and the starting position. Call {@link #generate}
-     * to generate the maze.
+     * Sets the dimensions and the starting position. Call {@code generate} to
+     * generate the maze.
      * 
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -52,12 +55,12 @@ public class RandomizedPrims extends Maze implements Serializable {
         super(width, height);
         checkPosition(startX, startY);
         start = new Node(startX, startY);
-        rnd = new FastRandom();
+        rnd = new LFib4();
     }
     
     /**
-     * Sets the dimensions and the starting position. Call {@link #generate}
-     * to generate the maze.
+     * Sets the dimensions and the starting position. Call {@code generate} to
+     * generate the maze.
      * 
      * @param  width the width of the maze
      * @param  height the height of the maze

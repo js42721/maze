@@ -2,18 +2,21 @@ package maze;
 
 import java.io.Serializable;
 
+import fastrandom.FastRandom;
+import fastrandom.LFib4;
+
 /** 
  * Implements the recursive backtracking algorithm. The algorithm works by
  * exploring unvisited nodes using randomized depth-first search.
  */
 public class RecursiveBacktracker extends Maze implements Serializable {
-    private static final long serialVersionUID = -9213468305268100310L;
+    private static final long serialVersionUID = -5689416515127359434L;
     
     private final FastRandom rnd;
     private final Node start;
     
     /**
-     * Sets the dimensions. Call {@link #generate} to generate the maze.
+     * Sets the dimensions. Call {@code generate} to generate the maze.
      * 
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -21,13 +24,13 @@ public class RecursiveBacktracker extends Maze implements Serializable {
      */
     public RecursiveBacktracker(int width, int height) {
         super(width, height);
-        rnd = new FastRandom();
+        rnd = new LFib4();
         start = new Node(rnd.nextInt(width), rnd.nextInt(height));
     }
     
     /**
-     * Sets the dimensions and the starting position. Call {@link #generate}
-     * to generate the maze.
+     * Sets the dimensions and the starting position. Call {@code generate} to
+     * generate the maze.
      * 
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -40,12 +43,12 @@ public class RecursiveBacktracker extends Maze implements Serializable {
         super(width, height);
         checkPosition(startX, startY);
         start = new Node(startX, startY);
-        rnd = new FastRandom();
+        rnd = new LFib4();
     }
     
     /**
-     * Sets the dimensions and the starting position. Call {@link #generate}
-     * to generate the maze.
+     * Sets the dimensions and the starting position. Call {@code generate} to
+     * generate the maze.
      * 
      * @param  width the width of the maze
      * @param  height the height of the maze

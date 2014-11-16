@@ -2,13 +2,16 @@ package maze;
 
 import java.io.Serializable;
 
+import fastrandom.FastRandom;
+import fastrandom.LFib4;
+
 /**
  * Implements Wilson's algorithm. The algorithm creates a uniform spanning
  * tree (a spanning tree randomly selected from all possible spanning trees)
  * by performing loop-erased random walks.
  */
 public class Wilsons extends Maze implements Serializable {
-    private static final long serialVersionUID = -6005323969001295290L;
+    private static final long serialVersionUID = 5105826907978290069L;
 
     /* The first two bits are reserved for directions. */
     private static final int IN = 1 << 2;
@@ -16,7 +19,7 @@ public class Wilsons extends Maze implements Serializable {
     private final FastRandom rnd;
     
     /**
-     * Sets the dimensions. Call {@link #generate} to generate the maze.
+     * Sets the dimensions. Call {@code generate} to generate the maze.
      * 
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -24,7 +27,7 @@ public class Wilsons extends Maze implements Serializable {
      */
     public Wilsons(int width, int height) {
         super(width, height);
-        rnd = new FastRandom();
+        rnd = new LFib4();
     }
     
     @Override

@@ -2,18 +2,21 @@ package maze;
 
 import java.io.Serializable;
 
+import fastrandom.FastRandom;
+import fastrandom.LFib4;
+
 /** 
  * Implements the binary tree algorithm. The algorithm carves in one of two
  * directions from each node. The result is a binary tree rooted at the corner
  * where the two carving directions converge.
  */
 public class BinaryTreeMaze extends Maze implements Serializable {
-    private static final long serialVersionUID = 1258049332970664669L;
+    private static final long serialVersionUID = -7079713075260480096L;
     
     private final FastRandom rnd;
     
     /**
-     * Sets the dimensions. Call {@link #generate} to generate the maze.
+     * Sets the dimensions. Call {@code generate} to generate the maze.
      * 
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -21,7 +24,7 @@ public class BinaryTreeMaze extends Maze implements Serializable {
      */
     public BinaryTreeMaze(int width, int height) {
         super(width, height);
-        rnd = new FastRandom();
+        rnd = new LFib4();
     }
 
     @Override

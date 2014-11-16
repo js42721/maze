@@ -2,9 +2,6 @@ package maze;
 
 /** A pair of coordinates. */
 public abstract class Position {
-    protected Position() {
-    }
-    
     /** Returns the x-coordinate. */
     public abstract int getX();
 
