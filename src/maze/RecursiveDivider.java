@@ -3,7 +3,7 @@ package maze;
 import java.io.Serializable;
 
 import fastrandom.FastRandom;
-import fastrandom.LFib4;
+import fastrandom.Taus88;
 
 /**
  * Implements the recursive division algorithm. The algorithm starts with an
@@ -27,7 +27,7 @@ public class RecursiveDivider extends Maze implements Serializable {
      */
     public RecursiveDivider(int width, int height) {
         super(width, height);
-        rnd = new LFib4();
+        rnd = new Taus88();
     }
     
     @Override

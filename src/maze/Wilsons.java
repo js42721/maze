@@ -3,7 +3,7 @@ package maze;
 import java.io.Serializable;
 
 import fastrandom.FastRandom;
-import fastrandom.LFib4;
+import fastrandom.Taus88;
 
 /**
  * Implements Wilson's algorithm. The algorithm creates a uniform spanning
@@ -27,7 +27,7 @@ public class Wilsons extends Maze implements Serializable {
      */
     public Wilsons(int width, int height) {
         super(width, height);
-        rnd = new LFib4();
+        rnd = new Taus88();
     }
     
     @Override

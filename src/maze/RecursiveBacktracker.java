@@ -3,7 +3,7 @@ package maze;
 import java.io.Serializable;
 
 import fastrandom.FastRandom;
-import fastrandom.LFib4;
+import fastrandom.Taus88;
 
 /** 
  * Implements the recursive backtracking algorithm. The algorithm works by
@@ -24,7 +24,7 @@ public class RecursiveBacktracker extends Maze implements Serializable {
      */
     public RecursiveBacktracker(int width, int height) {
         super(width, height);
-        rnd = new LFib4();
+        rnd = new Taus88();
         start = new Node(rnd.nextInt(width), rnd.nextInt(height));
     }
     
@@ -43,7 +43,7 @@ public class RecursiveBacktracker extends Maze implements Serializable {
         super(width, height);
         checkPosition(startX, startY);
         start = new Node(startX, startY);
-        rnd = new LFib4();
+        rnd = new Taus88();
     }
     
     /**

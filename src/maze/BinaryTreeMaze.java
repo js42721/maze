@@ -3,7 +3,7 @@ package maze;
 import java.io.Serializable;
 
 import fastrandom.FastRandom;
-import fastrandom.LFib4;
+import fastrandom.Taus88;
 
 /** 
  * Implements the binary tree algorithm. The algorithm carves in one of two
@@ -24,7 +24,7 @@ public class BinaryTreeMaze extends Maze implements Serializable {
      */
     public BinaryTreeMaze(int width, int height) {
         super(width, height);
-        rnd = new LFib4();
+        rnd = new Taus88();
     }
 
     @Override
