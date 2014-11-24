@@ -1,10 +1,12 @@
 Maze
 ====
 
-This Java library contains fast implementations of several classic maze
-generation algorithms:
+This Java library contains fast implementations of several maze generation
+algorithms:
 
 * [Binary tree algorithm](src/maze/BinaryTreeMaze.java)
+* [Eller's algorithm](src/maze/Ellers.java)
+* [Randomized Kruskal's algorithm](src/maze/RandomizedKruskals.java)
 * [Randomized Prim's algorithm](src/maze/RandomizedPrims.java)
 * [Recursive backtracking](src/maze/RecursiveBacktracker.java)
 * [Recursive division](src/maze/RecursiveDivider.java)
