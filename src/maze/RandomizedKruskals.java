@@ -57,16 +57,15 @@ public class RandomizedKruskals extends Maze implements Serializable {
         }
     }
     
-    /** Returns a list of all the edges in the maze.*/ 
+    /** 
+     * Returns a list of all the edges in the maze. The sign bit is used to
+     * distinguish the horizontal edges from the vertical ones.
+     */ 
     private int[] getEdges() {
         int nodes = getWidth() * getHeight();
         int[] edges = new int[2 * nodes - getWidth() - getHeight()];
         int index = 0;
         
-        /* 
-         * Adds edges to the edge list. The sign bit is used to distinguish
-         * the horizontal edges from the vertical ones.
-         */
         for (int y = 0; y < getHeight() - 1; ++y) {
             for (int x = 0; x < getWidth() - 1; ++x) {
                 int mazeIndex = y * getWidth() + x;
@@ -75,12 +74,10 @@ public class RandomizedKruskals extends Maze implements Serializable {
             }
         }
         
-        /* Adds the remaining vertical edges. */
-        for (int y = 0; y < getHeight() - 1; ++y) {
-            edges[index++] = y * getWidth() + getWidth() - 1;
+        for (int y = 1; y < getHeight(); ++y) {
+            edges[index++] = y * getWidth() - 1;
         }
 
-        /* Adds the remaining horizontal edges. */
         for (int x = nodes - getWidth(); x < nodes - 1; ++x) {
             edges[index++] = x | 0x80000000;
         }
