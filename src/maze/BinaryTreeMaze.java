@@ -34,7 +34,7 @@ public class BinaryTreeMaze extends Maze implements Serializable {
         binaryTreeMaze();
     }
     
-    private void binaryTreeMaze() {        
+    private void binaryTreeMaze() {
         for (int y = 1; y < getHeight(); ++y) {
             for (int x = 1; x < getWidth(); ++x) {
                 addWall(x, y, rnd.nextBoolean() ? Direction.LEFT : Direction.UP);

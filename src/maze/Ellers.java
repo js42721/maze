@@ -29,20 +29,18 @@ public class Ellers extends Maze implements Serializable {
         ellers();
     }
     
-    private void ellers() {
-        int width = getWidth();
-        int height = getHeight();
-        int xEnd = width - 1;
-        int yEnd = height - 1;
-        
+    private void ellers() {        
         /* Left/right pointers of a doubly-linked list (the set container). */
-        int[] left = new int[width];
-        int[] right = new int[width];
+        int[] left = new int[getWidth()];
+        int[] right = new int[getWidth()];
         
         /* Initializes the sets. */
-        for (int x = 0; x < width; ++x) {
+        for (int x = 0; x < getWidth(); ++x) {
             left[x] = right[x] = x;
         }
+
+        int xEnd = getWidth() - 1;
+        int yEnd = getHeight() - 1;
         
         for (int y = 0; y < yEnd; ++y) {
             for (int x = 0; x < xEnd; ++x) {
@@ -65,7 +63,7 @@ public class Ellers extends Maze implements Serializable {
                 }
             }
 
-            /* Handles the rightmost position. */
+            /* Creates vertical passages for the rightmost column. */
             if (right[xEnd] != xEnd && rnd.nextInt(5) < 3) {
                 left[right[xEnd]] = left[xEnd];
                 right[left[xEnd]] = right[xEnd];
@@ -82,7 +80,7 @@ public class Ellers extends Maze implements Serializable {
                 right[left[x + 1]] = right[x];
                 right[x] = x + 1;
                 left[x + 1] = x;
-                carve(x, height - 1, Direction.RIGHT);
+                carve(x, yEnd, Direction.RIGHT);
             }
         }
     }

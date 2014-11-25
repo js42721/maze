@@ -35,53 +35,57 @@ public class RandomizedKruskals extends Maze implements Serializable {
     }
 
     private void randomizedKruskals() {
-        int width = getWidth();
-        int height = getHeight();
-        int nodes = width * height;
+        int[] edges = getEdges();
         
-        int[] edgeList = new int[2 * nodes - width - height];
-        int edgeIndex = 0;
-        
-        /* 
-         * Adds edges to the edge list. The sign bit is used to distinguish
-         * the horizontal edges from the vertical ones.
-         */
-        for (int y = 0; y < height - 1; ++y) {
-            for (int x = 0; x < width - 1; ++x) {
-                int mazeIndex = y * width + x;
-                edgeList[edgeIndex++] = mazeIndex;
-                edgeList[edgeIndex++] = mazeIndex | 0x80000000;
-            }
-        }
-        
-        /* Adds the remaining vertical edges. */
-        for (int y = 0; y < height - 1; ++y) {
-            edgeList[edgeIndex++] = y * width + width - 1;
-        }
-
-        /* Adds the remaining horizontal edges. */
-        for (int x = nodes - width; x < nodes - 1; ++x) {
-            edgeList[edgeIndex++] = x | 0x80000000;
-        }
-
         /* Allows us to iterate over the edge list in random order. */
-        shuffle(edgeList);
+        shuffle(edges);
 
         /* Creates a disjoint set forest containing a set for each node. */
-        DisjointSetForest dsf = new DisjointSetForest(nodes);
+        DisjointSetForest dsf = new DisjointSetForest(getWidth() * getHeight());
 
         /* 
          * Processes each edge (in random order) by merging its nodes if they
          * belong to different sets. 
          */        
-        for (int e : edgeList) {
+        for (int e : edges) {
             Direction d = (e < 0) ? Direction.RIGHT : Direction.DOWN;
             int u = e & 0x7fffffff;
-            int v = u + d.dy * width + d.dx;
+            int v = u + d.dy * getWidth() + d.dx;
             if (dsf.union(u, v)) {
-                carve(u % width, u / width, d);
+                carve(u % getWidth(), u / getWidth(), d);
             }
         }
+    }
+    
+    /** Returns a list of all the edges in the maze.*/ 
+    private int[] getEdges() {
+        int nodes = getWidth() * getHeight();
+        int[] edges = new int[2 * nodes - getWidth() - getHeight()];
+        int index = 0;
+        
+        /* 
+         * Adds edges to the edge list. The sign bit is used to distinguish
+         * the horizontal edges from the vertical ones.
+         */
+        for (int y = 0; y < getHeight() - 1; ++y) {
+            for (int x = 0; x < getWidth() - 1; ++x) {
+                int mazeIndex = y * getWidth() + x;
+                edges[index++] = mazeIndex;
+                edges[index++] = mazeIndex | 0x80000000;
+            }
+        }
+        
+        /* Adds the remaining vertical edges. */
+        for (int y = 0; y < getHeight() - 1; ++y) {
+            edges[index++] = y * getWidth() + getWidth() - 1;
+        }
+
+        /* Adds the remaining horizontal edges. */
+        for (int x = nodes - getWidth(); x < nodes - 1; ++x) {
+            edges[index++] = x | 0x80000000;
+        }
+        
+        return edges;
     }
 
     /** Randomly permutes the elements in an array. */
