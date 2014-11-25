@@ -8,7 +8,7 @@ import fastrandom.Taus88;
 
 /** 
  * Implements a randomized version of Kruskal's algorithm. It is essentially
- * Kruskal's algorithm with random edge weights so it results in a minimum
+ * Kruskal's algorithm with random edge weights so its result is a minimum
  * spanning tree for an equally weighted graph.
  */
 public class RandomizedKruskals extends Maze implements Serializable {
