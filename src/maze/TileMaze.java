@@ -74,18 +74,18 @@ public class TileMaze implements Serializable {
             return true;
         }
         if (x == 0) { // Tile is on the left border.
-            return maze.isWall((x - 1) / 2, (y - 1) / 2, Direction.LEFT);
+            return maze.isWall(0, (y - 1) >>> 1, Direction.LEFT);
         }
         if (y == 0) { // Tile is on the upper border.
-            return maze.isWall((x - 1) / 2, (y - 1) / 2, Direction.UP);
+            return maze.isWall((x - 1) >>> 1, 0, Direction.UP);
         }
         if (xEven) { // Tile is on the right of the position's transform.
-            return maze.isWall((x - 1) / 2, (y - 1) / 2, Direction.RIGHT);
+            return maze.isWall((x - 1) >>> 1, (y - 1) >>> 1, Direction.RIGHT);
         }
         if (yEven) { // Tile is below the position's transform.
-            return maze.isWall((x - 1) / 2, (y - 1) / 2, Direction.DOWN);
+            return maze.isWall((x - 1) >>> 1, (y - 1) >>> 1, Direction.DOWN);
         }
-        return false; // Odd-odd (the rest) means no wall.
+        return false; // Odd-odd means no wall.
     }
     
     /**

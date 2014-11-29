@@ -35,9 +35,10 @@ public class RandomizedKruskals extends Maze implements Serializable {
     }
 
     private void randomizedKruskals() {
+        /* Gathers all the edges. */
         int[] edges = getEdges();
         
-        /* Allows us to iterate over the edge list in random order. */
+        /* Allows us to iterate over the edges in random order. */
         shuffle(edges);
 
         /* Creates a disjoint set forest containing a set for each node. */
@@ -46,7 +47,7 @@ public class RandomizedKruskals extends Maze implements Serializable {
         /* 
          * Processes each edge (in random order) by merging its nodes if they
          * belong to different sets. 
-         */        
+         */
         for (int e : edges) {
             Direction d = (e < 0) ? Direction.RIGHT : Direction.DOWN;
             int u = e & 0x7fffffff;
