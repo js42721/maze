@@ -143,11 +143,11 @@ public abstract class Maze implements Serializable {
 
     /** Creates the borders. */
     protected final void addBorders() {
-        for (int y = 0; y < getHeight(); ++y) {
+        for (int y = 0; y < height; ++y) {
             maze[y * width] |= Direction.LEFT.mask;
-            maze[y * width + width - 1] |= Direction.RIGHT.mask;
+            maze[(y + 1) * width - 1] |= Direction.RIGHT.mask;
         }
-        for (int x = 0; x < getWidth(); ++x) {
+        for (int x = 0; x < width; ++x) {
             maze[x] |= Direction.UP.mask;
             maze[(height - 1) * width + x] |= Direction.DOWN.mask;
         }

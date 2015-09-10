@@ -34,8 +34,8 @@ public class TileMaze implements Serializable {
             throw new NullPointerException();
         }
         this.maze = maze;
-        width = maze.getWidth() * 2 + 1;
-        height = maze.getHeight() * 2 + 1;
+        width = 2 * maze.getWidth() + 1;
+        height = 2 * maze.getHeight() + 1;
     }
     
     /** Returns the internal maze object. */
@@ -68,22 +68,22 @@ public class TileMaze implements Serializable {
      */
     public boolean isWall(int x, int y) {
         checkBounds(x, y);
-        boolean xEven = (x & 1) == 0;
-        boolean yEven = (y & 1) == 0;
+        boolean xEven = (x % 2 == 0);
+        boolean yEven = (y % 2 == 0);
         if (xEven && yEven) { // Even-even means wall.
             return true;
         }
         if (x == 0) { // Tile is on the left border.
-            return maze.isWall(0, (y - 1) >>> 1, Direction.LEFT);
+            return maze.isWall(0, (y - 1) / 2, Direction.LEFT);
         }
         if (y == 0) { // Tile is on the upper border.
-            return maze.isWall((x - 1) >>> 1, 0, Direction.UP);
+            return maze.isWall((x - 1) / 2, 0, Direction.UP);
         }
         if (xEven) { // Tile is on the right of the position's transform.
-            return maze.isWall((x - 1) >>> 1, (y - 1) >>> 1, Direction.RIGHT);
+            return maze.isWall((x - 1) / 2, (y - 1) / 2, Direction.RIGHT);
         }
         if (yEven) { // Tile is below the position's transform.
-            return maze.isWall((x - 1) >>> 1, (y - 1) >>> 1, Direction.DOWN);
+            return maze.isWall((x - 1) / 2, (y - 1) / 2, Direction.DOWN);
         }
         return false; // Odd-odd means no wall.
     }
