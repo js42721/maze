@@ -24,7 +24,7 @@ public abstract class Position {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Position) {
-            Position p = (Position)obj;
+            Position p = (Position) obj;
             return getX() == p.getX() && getY() == p.getY();
         }
         return false;

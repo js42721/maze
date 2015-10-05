@@ -15,9 +15,9 @@ public abstract class Maze implements Serializable {
 
     private static final int WALL_MASK = 0xf;
 
+    private final byte[] maze;
     private final int width;
     private final int height;
-    private final byte[] maze;
 
     /**
      * Sets the dimensions.
@@ -133,12 +133,12 @@ public abstract class Maze implements Serializable {
 
     /** Clears all walls and flags. */
     protected final void reset() {
-        Arrays.fill(maze, (byte)0);
+        Arrays.fill(maze, (byte) 0);
     }
 
     /** Fills the maze with walls and clears all flags. */
     protected final void resetFill() {
-        Arrays.fill(maze, (byte)WALL_MASK);
+        Arrays.fill(maze, (byte) WALL_MASK);
     }
 
     /** Creates the borders. */
@@ -267,7 +267,7 @@ public abstract class Maze implements Serializable {
     protected final void setFlags(int x, int y, int flags) {
         assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
         int i = y * width + x;
-        maze[i] = (byte)(maze[i] & WALL_MASK | flags << 4);
+        maze[i] = (byte) (maze[i] & WALL_MASK | flags << 4);
     }
 
     /** Sets the flag bits for the specified position. */
