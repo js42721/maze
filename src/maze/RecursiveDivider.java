@@ -12,15 +12,15 @@ import fastrandom.Taus88;
  */
 public class RecursiveDivider extends Maze implements Serializable {
     private static final long serialVersionUID = -6219935045687115436L;
-    
+
     private static final boolean HORIZONTAL = true;
     private static final boolean VERTICAL   = false;
-    
+
     private final FastRandom rnd;
-    
+
     /**
      * Sets the dimensions. Call {@code generate} to generate the maze.
-     * 
+     *
      * @param  width the width of the maze
      * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
@@ -29,19 +29,19 @@ public class RecursiveDivider extends Maze implements Serializable {
         super(width, height);
         rnd = new Taus88();
     }
-    
+
     @Override
     public void generate() {
         reset();
         addBorders();
         recursiveDivision(0, 0, getWidth(), getHeight());
     }
-    
+
     private void recursiveDivision(int x, int y, int width, int height) {
         if (width <= 1 || height <= 1) {
             return;
         }
-        
+
         int aw, ah;
         int bx, by, bw, bh;
 
@@ -72,17 +72,17 @@ public class RecursiveDivider extends Maze implements Serializable {
             aw = bx - x;
             ah = height;
         }
-        
+
         recursiveDivision(x, y, aw, ah);
         recursiveDivision(bx, by, bw, bh);
     }
-    
+
     /** Chooses wall orientation based on the dimensions of an area. */
     private boolean getOrientation(int width, int height) {
-        if (width > height * 2) {
+        if (width > 2 * height) {
             return VERTICAL;
         }
-        if (height > width * 2) {
+        if (height > 2 * width) {
             return HORIZONTAL;
         }
         return rnd.nextBoolean();

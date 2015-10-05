@@ -7,25 +7,25 @@ import maze.Maze.Direction;
 /** Tile maze wrapper for {@link Maze}. */
 public class TileMaze implements Serializable {
     private static final long serialVersionUID = -5050221133107186563L;
-    
+
     private Maze maze;
     private int width;
     private int height;
-    
+
     /**
      * Creates a tile maze wrapper around the specified maze, allowing
      * tile-centric interaction.
-     * 
+     *
      * @param  maze the maze to wrap
      * @throws NullPointerException if the maze is null
      */
     public TileMaze(Maze maze) {
         setMaze(maze);
     }
-    
+
     /**
      * Wraps this around the specified maze.
-     * 
+     *
      * @param  maze the maze to wrap
      * @throws NullPointerException if the maze is null
      */
@@ -37,17 +37,17 @@ public class TileMaze implements Serializable {
         width = 2 * maze.getWidth() + 1;
         height = 2 * maze.getHeight() + 1;
     }
-    
+
     /** Returns the internal maze object. */
     public Maze getMaze() {
         return maze;
     }
-    
+
     /** Generates the maze. */
     public void generate() {
         maze.generate();
     }
-    
+
     /** Returns the width of the maze in tiles. */
     public int getWidth() {
         return width;
@@ -57,10 +57,10 @@ public class TileMaze implements Serializable {
     public int getHeight() {
         return height;
     }
-    
+
     /**
      * Checks if the tile at the specified position is a wall.
-     * 
+     *
      * @param  x the x-coordinate of the tile to check
      * @param  y the y-coordinate of the tile to check
      * @return true if the tile is a wall
@@ -87,10 +87,10 @@ public class TileMaze implements Serializable {
         }
         return false; // Odd-odd means no wall.
     }
-    
+
     /**
      * Checks if the tile at the specified position is a wall.
-     * 
+     *
      * @param  p the position of the tile to check
      * @return true if the tile is a wall
      * @throws PositionOutOfBoundsException if p is out of bounds
@@ -99,7 +99,7 @@ public class TileMaze implements Serializable {
     public boolean isWall(Position p) {
         return isWall(p.getX(), p.getY());
     }
-    
+
     @Override
     public String toString() {
         String lineSeparator = System.getProperty("line.separator");
@@ -116,7 +116,7 @@ public class TileMaze implements Serializable {
         }
         return builder.toString();
     }
-    
+
     private void checkBounds(int x, int y) {
         if (x < 0 || x >= width || y < 0 || y >= height) {
             throw new PositionOutOfBoundsException("(" + x + ", " + y + ")");

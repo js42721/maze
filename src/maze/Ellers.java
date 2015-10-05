@@ -8,12 +8,12 @@ import fastrandom.Taus88;
 /** Implements an algorithm which some people refer to as Eller's algorithm. */
 public class Ellers extends Maze implements Serializable {
     private static final long serialVersionUID = -4403644618765868512L;
-    
+
     private final FastRandom rnd;
 
     /**
      * Sets the dimensions. Call {@code generate} to generate the maze.
-     * 
+     *
      * @param  width the width of the maze
      * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
@@ -28,12 +28,12 @@ public class Ellers extends Maze implements Serializable {
         resetFill();
         ellers();
     }
-    
-    private void ellers() {        
+
+    private void ellers() {
         /* Left/right pointers of a doubly-linked list (the set container). */
         int[] left = new int[getWidth()];
         int[] right = new int[getWidth()];
-        
+
         /* Initializes the sets. */
         for (int x = 0; x < getWidth(); ++x) {
             left[x] = right[x] = x;
@@ -41,7 +41,7 @@ public class Ellers extends Maze implements Serializable {
 
         int xEnd = getWidth() - 1;
         int yEnd = getHeight() - 1;
-        
+
         for (int y = 0; y < yEnd; ++y) {
             for (int x = 0; x < xEnd; ++x) {
                 /* Creates horizontal passages. */
@@ -72,7 +72,7 @@ public class Ellers extends Maze implements Serializable {
                 carve(xEnd, y, Direction.DOWN);
             }
         }
-        
+
         /* Creates the last row. */
         for (int x = 0; x < xEnd; ++x) {
             if (right[x] != x + 1) {

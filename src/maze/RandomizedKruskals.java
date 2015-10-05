@@ -6,19 +6,19 @@ import datastructures.DisjointSetForest;
 import fastrandom.FastRandom;
 import fastrandom.Taus88;
 
-/** 
+/**
  * Implements a randomized version of Kruskal's algorithm. It is essentially
  * Kruskal's algorithm with random edge weights so its result is a minimum
  * spanning tree for an equally weighted graph.
  */
 public class RandomizedKruskals extends Maze implements Serializable {
     private static final long serialVersionUID = 612546716632291472L;
-    
+
     private final FastRandom rnd;
 
     /**
      * Sets the dimensions. Call {@code generate} to generate the maze.
-     * 
+     *
      * @param  width the width of the maze
      * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
@@ -37,16 +37,16 @@ public class RandomizedKruskals extends Maze implements Serializable {
     private void randomizedKruskals() {
         /* Gathers all the edges. */
         int[] edges = getEdges();
-        
+
         /* Allows us to iterate over the edges in random order. */
         shuffle(edges);
 
         /* Creates a disjoint set forest containing a set for each node. */
         DisjointSetForest dsf = new DisjointSetForest(getWidth() * getHeight());
 
-        /* 
+        /*
          * Processes each edge (in random order) by merging its nodes if they
-         * belong to different sets. 
+         * belong to different sets.
          */
         for (int e : edges) {
             Direction d = (e < 0) ? Direction.RIGHT : Direction.DOWN;
@@ -57,16 +57,16 @@ public class RandomizedKruskals extends Maze implements Serializable {
             }
         }
     }
-    
-    /** 
+
+    /**
      * Returns a list of all the edges in the maze. The sign bit is used to
      * distinguish the horizontal edges from the vertical ones.
-     */ 
+     */
     private int[] getEdges() {
         int nodes = getWidth() * getHeight();
         int[] edges = new int[2 * nodes - getWidth() - getHeight()];
         int index = 0;
-        
+
         for (int y = 0; y < getHeight() - 1; ++y) {
             for (int x = 0; x < getWidth() - 1; ++x) {
                 int mazeIndex = y * getWidth() + x;
@@ -74,7 +74,7 @@ public class RandomizedKruskals extends Maze implements Serializable {
                 edges[index++] = mazeIndex | 0x80000000;
             }
         }
-        
+
         for (int y = 1; y < getHeight(); ++y) {
             edges[index++] = y * getWidth() - 1;
         }
@@ -82,7 +82,7 @@ public class RandomizedKruskals extends Maze implements Serializable {
         for (int x = nodes - getWidth(); x < nodes - 1; ++x) {
             edges[index++] = x | 0x80000000;
         }
-        
+
         return edges;
     }
 

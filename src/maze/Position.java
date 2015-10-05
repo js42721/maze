@@ -7,7 +7,7 @@ public abstract class Position {
 
     /** Returns the y-coordinate. */
     public abstract int getY();
-    
+
     @Override
     public String toString() {
         return "(" + getX() + ", " + getY() + ")";

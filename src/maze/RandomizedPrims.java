@@ -8,7 +8,7 @@ import java.util.List;
 import fastrandom.FastRandom;
 import fastrandom.Taus88;
 
-/** 
+/**
  * Implements a randomized version of Prim's algorithm. This algorithm is not
  * to be confused with regular Prim's algorithm with random weights. While
  * both algorithms work by expanding from a single node, the randomized
@@ -19,17 +19,17 @@ import fastrandom.Taus88;
  */
 public class RandomizedPrims extends Maze implements Serializable {
     private static final long serialVersionUID = 1761553893140412668L;
-    
+
     private static final int OUT      = 0;
     private static final int IN       = 1 << 0;
     private static final int FRONTIER = 1 << 1;
-    
+
     private final FastRandom rnd;
     private final Node start;
-    
+
     /**
      * Sets the dimensions. Call {code generate} to generate the maze.
-     * 
+     *
      * @param  width the width of the maze
      * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
@@ -39,11 +39,11 @@ public class RandomizedPrims extends Maze implements Serializable {
         rnd = new Taus88();
         start = new Node(rnd.nextInt(width), rnd.nextInt(height));
     }
-    
+
     /**
      * Sets the dimensions and the starting position. Call {@code generate} to
      * generate the maze.
-     * 
+     *
      * @param  width the width of the maze
      * @param  height the height of the maze
      * @param  startX the x-coordinate of the algorithm's starting position
@@ -57,11 +57,11 @@ public class RandomizedPrims extends Maze implements Serializable {
         start = new Node(startX, startY);
         rnd = new Taus88();
     }
-    
+
     /**
      * Sets the dimensions and the starting position. Call {@code generate} to
      * generate the maze.
-     * 
+     *
      * @param  width the width of the maze
      * @param  height the height of the maze
      * @param  start the algorithm's starting position
@@ -75,7 +75,7 @@ public class RandomizedPrims extends Maze implements Serializable {
 
     /**
      * Sets the algorithm's starting position.
-     * 
+     *
      * @param  x the x-coordinate of the starting position
      * @param  y the y-coordinate of the starting position
      * @throws PositionOutOfBoundsException if (x, y) is out of bounds
@@ -84,10 +84,10 @@ public class RandomizedPrims extends Maze implements Serializable {
         checkPosition(x, y);
         start.set(x, y);
     }
-    
+
     /**
      * Sets the algorithm's starting position.
-     * 
+     *
      * @param  start the starting position
      * @throws PositionOutOfBoundsException if start is out of bounds
      * @throws NullPointerException if start is null
@@ -95,50 +95,50 @@ public class RandomizedPrims extends Maze implements Serializable {
     public void setStart(Position start) {
         setStart(start.getX(), start.getY());
     }
-    
+
     /** Returns the algorithm's starting position. */
     public Position getStart() {
         return new Node(start);
     }
-    
+
     @Override
     public void generate() {
         resetFill();
         randomizedPrims(start);
     }
-    
+
     private void randomizedPrims(Node start) {
         /* Frontiers are the unvisited nodes adjacent to the visited ones. */
         List<Node> frontiers = new ArrayList<Node>();
         Direction[] neighbors = new Direction[4];
-        
+
         /* Marks the starting node as visited and gets its frontiers. */
         setFlags(start, IN);
         getFrontiers(start, frontiers);
-        
+
         while (!frontiers.isEmpty()) {
             /* Picks a random frontier. */
             int random = rnd.nextInt(frontiers.size());
             int last = frontiers.size() - 1;
             Collections.swap(frontiers, random, last); // For O(1) removal.
             Node current = frontiers.remove(last);
-            
+
             /* Picks a random visited neighbor of the frontier. */
             int neighborCount = getVisitedNeighbors(current, neighbors);
             Direction d = neighbors[rnd.nextInt(neighborCount)];
-            
-            /* 
+
+            /*
              * Removes the wall between the frontier and the selected neighbor
              * and then marks the frontier as visited.
              */
             carve(current, d);
             setFlags(current, IN);
-            
+
             /* Looks for new frontiers. */
             getFrontiers(current, frontiers);
         }
     }
-    
+
     /**
      * Finds the unvisited neighbors of a node and adds them to the frontier
      * list if they were not already included.
@@ -157,14 +157,14 @@ public class RandomizedPrims extends Maze implements Serializable {
             markFrontier(n.x + 1, n.y, frontiers);
         }
     }
-    
+
     /** Helper method for getFrontiers. */
     private void markFrontier(int x, int y, List<Node> frontiers) {
         Node n = new Node(x, y);
         setFlags(n, FRONTIER);
         frontiers.add(n);
     }
-    
+
     /** Gets the directions pointing to the visited neighbors of a node. */
     private int getVisitedNeighbors(Node n, Direction[] neighbors) {
         int count = 0;

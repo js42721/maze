@@ -3,7 +3,7 @@ package maze;
 import java.io.Serializable;
 import java.util.Arrays;
 
-/** 
+/**
  * A two-dimensional maze representation. The walls of a maze node are stored
  * as four bit fields. Each node is given a byte, leaving four unused bits per
  * node. These unused bits are made accessible to subclasses since they can be
@@ -14,14 +14,14 @@ public abstract class Maze implements Serializable {
     private static final long serialVersionUID = 6114059191423368387L;
 
     private static final int WALL_MASK = 0xf;
-    
+
     private final int width;
     private final int height;
     private final byte[] maze;
-    
+
     /**
      * Sets the dimensions.
-     * 
+     *
      * @param  width the width of the maze
      * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
@@ -37,7 +37,7 @@ public abstract class Maze implements Serializable {
 
     /** Generates the maze. */
     public abstract void generate();
-    
+
     /** Returns the width of the maze. */
     public final int getWidth() {
         return width;
@@ -47,10 +47,10 @@ public abstract class Maze implements Serializable {
     public final int getHeight() {
         return height;
     }
-    
+
     /**
      * Checks if a certain wall exists at a position.
-     * 
+     *
      * @param  x the x-coordinate of the position
      * @param  y the y-coordinate of the position
      * @param  d the direction to check
@@ -65,7 +65,7 @@ public abstract class Maze implements Serializable {
 
     /**
      * Checks if a certain wall exists at a position.
-     * 
+     *
      * @param  p the position
      * @param  d the direction to check
      * @return true if the wall exists
@@ -74,8 +74,8 @@ public abstract class Maze implements Serializable {
      */
     public final boolean isWall(Position p, Direction d) {
         return isWall(p.getX(), p.getY(), d);
-    }    
-    
+    }
+
     @Override
     public String toString() {
         String lineSeparator = System.getProperty("line.separator");
@@ -116,26 +116,26 @@ public abstract class Maze implements Serializable {
         }
         return builder.toString();
     }
-    
+
     /** Fills the maze with walls (leaves flags intact). */
     protected final void fillWalls() {
         for (int i = 0; i < maze.length; ++i) {
             maze[i] |= WALL_MASK;
         }
     }
-    
+
     /** Removes all walls (leaves flags intact). */
     protected final void clearWalls() {
         for (int i = 0; i < maze.length; ++i) {
             maze[i] &= ~WALL_MASK;
         }
     }
-    
+
     /** Clears all walls and flags. */
     protected final void reset() {
         Arrays.fill(maze, (byte)0);
     }
-    
+
     /** Fills the maze with walls and clears all flags. */
     protected final void resetFill() {
         Arrays.fill(maze, (byte)WALL_MASK);
@@ -152,19 +152,19 @@ public abstract class Maze implements Serializable {
             maze[(height - 1) * width + x] |= Direction.DOWN.mask;
         }
     }
-    
+
     /** Places a wall between two positions. */
     protected final void addWall(int x, int y, Direction d) {
         assert !isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is a border";
         maze[y * width + x] |= d.mask;
         maze[(y + d.dy) * width + x + d.dx] |= d.getReverse().mask;
     }
-    
+
     /** Places a wall between two positions. */
     protected final void addWall(Position p, Direction d) {
         addWall(p.getX(), p.getY(), d);
     }
-    
+
     /** Removes the wall between two positions. */
     protected final void carve(int x, int y, Direction d) {
         assert !isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is a border";
@@ -198,7 +198,7 @@ public abstract class Maze implements Serializable {
     protected final void removeBorder(Position p, Direction d) {
         removeBorder(p.getX(), p.getY(), d);
     }
-    
+
     /** Checks if a position is free of walls on all sides. */
     protected final boolean isClear(int x, int y) {
         assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
@@ -209,7 +209,7 @@ public abstract class Maze implements Serializable {
     protected final boolean isClear(Position p) {
         return isClear(p.getX(), p.getY());
     }
-    
+
     /** Checks if a position is blocked by walls on all sides. */
     protected final boolean isClosed(int x, int y) {
         assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
@@ -220,17 +220,17 @@ public abstract class Maze implements Serializable {
     protected final boolean isClosed(Position p) {
         return isClosed(p.getX(), p.getY());
     }
-    
+
     /** Checks if a wall is a border. */
     protected final boolean isBorder(int x, int y, Direction d) {
         assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
         int validBorders = 0;
         if (y == 0) {
             validBorders |= Direction.UP.mask;
-        } 
+        }
         if (x == 0) {
             validBorders |= Direction.LEFT.mask;
-        } 
+        }
         if (y == height - 1) {
             validBorders |= Direction.DOWN.mask;
         }
@@ -269,44 +269,44 @@ public abstract class Maze implements Serializable {
         int i = y * width + x;
         maze[i] = (byte)(maze[i] & WALL_MASK | flags << 4);
     }
-    
+
     /** Sets the flag bits for the specified position. */
     protected final void setFlags(Position p, int flags) {
         setFlags(p.getX(), p.getY(), flags);
     }
-    
+
     /** Clears all flags. */
     protected final void resetFlags() {
         for (int i = 0; i < maze.length; ++i) {
             maze[i] &= WALL_MASK;
         }
     }
-    
+
     public enum Direction {
         UP   (1 << 0,  0, -1),
         LEFT (1 << 1, -1,  0),
         DOWN (1 << 2,  0,  1),
         RIGHT(1 << 3,  1,  0);
-        
+
         public final int dx;
         public final int dy;
 
         private final int mask;
         private Direction reverse;
-        
+
         static {
             UP.reverse    = DOWN;
             LEFT.reverse  = RIGHT;
             DOWN.reverse  = UP;
             RIGHT.reverse = LEFT;
         }
-        
+
         Direction(int mask, int dx, int dy) {
             this.mask = mask;
             this.dx = dx;
             this.dy = dy;
         }
-        
+
         public Direction getReverse() {
             return reverse;
         }
