@@ -1,24 +1,21 @@
 package maze;
 
-/** Represents a cardinal direction. */
+/** Represents a direction relative to a point in a maze. */
 public enum Direction {
-    NORTH (1 << 0,  0, -1),
-    EAST  (1 << 1,  1,  0),
-    SOUTH (1 << 2,  0,  1),
-    WEST  (1 << 3, -1,  0);
+    NORTH(1 << 0, 0, -1), EAST(1 << 1, 1, 0), SOUTH(1 << 2, 0, 1), WEST(1 << 3, -1, 0);
 
     public final int dx;
     public final int dy;
 
     final int mask;
-    
+
     private Direction reverse;
 
     static {
         NORTH.reverse = SOUTH;
-        EAST.reverse  = WEST;
+        EAST.reverse = WEST;
         SOUTH.reverse = NORTH;
-        WEST.reverse  = EAST;
+        WEST.reverse = EAST;
     }
 
     Direction(int mask, int dx, int dy) {
@@ -26,7 +23,7 @@ public enum Direction {
         this.dx = dx;
         this.dy = dy;
     }
-    
+
     public Direction getReverse() {
         return reverse;
     }

@@ -68,24 +68,24 @@ public class TileMaze implements Serializable {
      */
     public boolean isWall(int x, int y) {
         checkBounds(x, y);
-        boolean xEven = (x % 2 == 0);
-        boolean yEven = (y % 2 == 0);
-        if (xEven && yEven) { // Even-even is wall.
+        boolean xIsEven = (x % 2 == 0);
+        boolean yIsEven = (y % 2 == 0);
+        if (xIsEven && yIsEven) {
             return true;
         }
-        if (x == 0) { // Tile is on the western border.
+        if (x == 0) {
             return maze.isWall(0, (y - 1) / 2, Direction.WEST);
         }
-        if (y == 0) { // Tile is on the northern border.
+        if (y == 0) {
             return maze.isWall((x - 1) / 2, 0, Direction.NORTH);
         }
-        if (xEven) { // Tile is east of the transformed coordinates.
+        if (xIsEven) {
             return maze.isWall((x - 1) / 2, (y - 1) / 2, Direction.EAST);
         }
-        if (yEven) { // Tile is south of the transformed coordinates.
+        if (yIsEven) {
             return maze.isWall((x - 1) / 2, (y - 1) / 2, Direction.SOUTH);
         }
-        return false; // Odd-odd is not wall.
+        return false;
     }
 
     /**
