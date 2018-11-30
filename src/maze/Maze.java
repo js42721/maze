@@ -109,7 +109,6 @@ public abstract class Maze implements Serializable {
         addWall(p.getX(), p.getY(), d);
     }
 
-
     /**
      * Removes a wall from a node.
      * 
@@ -203,7 +202,7 @@ public abstract class Maze implements Serializable {
         }
         return builder.toString();
     }
-    
+
     /** Checks if a node is walled off from all directions. */
     protected final boolean isUnvisited(int x, int y) {
         return (b[y * width + x] & WALL_MASK) == WALL_MASK;
