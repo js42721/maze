@@ -51,12 +51,12 @@ public abstract class Maze implements Serializable {
     }
 
     /**
-     * Checks whether a location is walled off from a given direction.
+     * Checks whether a node is walled off from a given direction.
      *
-     * @param  x the x-coordinate of the location
-     * @param  y the y-coordinate of the location
+     * @param  x the x-coordinate of the node
+     * @param  y the y-coordinate of the node
      * @param  d the direction to check
-     * @return true if (x, y) is walled off in direction d
+     * @return true if the wall exists
      * @throws OutOfBoundsException if (x, y) is out of bounds
      * @throws NullPointerException if d is null
      */
@@ -66,11 +66,11 @@ public abstract class Maze implements Serializable {
     }
 
     /**
-     * Checks whether a location is walled off from a given direction.
+     * Checks whether a node is walled off from a given direction.
      *
-     * @param  p the coordinates of the location
+     * @param  p the coordinates of the node
      * @param  d the direction to check
-     * @return true if p is walled off in direction d
+     * @return true if the wall exists
      * @throws OutOfBoundsException if p is out of bounds
      * @throws NullPointerException if an argument is null
      */
@@ -79,11 +79,11 @@ public abstract class Maze implements Serializable {
     }
 
     /**
-     * Puts a wall in a given direction from a location.
+     * Adds a wall to a node.
      * 
-     * @param  x the x-coordinate of the location
-     * @param  y the y-coordinate of the location
-     * @param  d the direction in which a wall is to be put
+     * @param  x the x-coordinate of the node
+     * @param  y the y-coordinate of the node
+     * @param  d the direction of the wall
      * @throws OutOfBoundsException if (x, y) is out of bounds
      * @throws NullPointerException if d is null
      */
@@ -98,10 +98,10 @@ public abstract class Maze implements Serializable {
     }
 
     /**
-     * Puts a wall in a given direction from a location.
+     * Adds a wall to a node.
      * 
-     * @param  p the coordinates of the location
-     * @param  d the direction in which a wall is to be put
+     * @param  p the coordinates of the node
+     * @param  d the direction of the wall
      * @throws OutOfBoundsException if p is out of bounds
      * @throws NullPointerException if an argument is null
      */
@@ -111,11 +111,11 @@ public abstract class Maze implements Serializable {
 
 
     /**
-     * Removes a wall in a given direction from a location.
+     * Removes a wall from a node.
      * 
-     * @param  x the x-coordinate of the location
-     * @param  y the y-coordinate of the location
-     * @param  d the direction in which a wall is to be removed
+     * @param  x the x-coordinate of the node
+     * @param  y the y-coordinate of the node
+     * @param  d the direction of the wall
      * @throws OutOfBoundsException if (x, y) is out of bounds
      * @throws NullPointerException if d is null
      */
@@ -130,10 +130,10 @@ public abstract class Maze implements Serializable {
     }
 
     /**
-     * Removes a wall in a given direction from a location.
+     * Removes a wall from a node.
      * 
-     * @param  p the coordinates of the location
-     * @param  d the direction in which a wall is to be removed
+     * @param  p the coordinates of the node
+     * @param  d the direction of the wall
      * @throws OutOfBoundsException if p is out of bounds
      * @throws NullPointerException if an argument is null
      */
@@ -204,7 +204,7 @@ public abstract class Maze implements Serializable {
         return builder.toString();
     }
     
-    /** Checks if a location is walled off from all directions. */
+    /** Checks if a node is walled off from all directions. */
     protected final boolean isUnvisited(int x, int y) {
         return (b[y * width + x] & WALL_MASK) == WALL_MASK;
     }
@@ -221,23 +221,23 @@ public abstract class Maze implements Serializable {
         }
     }
 
-    /** Returns the flag bits for the specified location. */
+    /** Returns the flag bits for the specified node. */
     protected final int getFlags(int x, int y) {
         return b[y * width + x] >>> 4;
     }
 
-    /** Returns the flag bits for the specified location. */
+    /** Returns the flag bits for the specified node. */
     protected final int getFlags(Point p) {
         return getFlags(p.getX(), p.getY());
     }
 
-    /** Sets the flag bits for the specified location. */
+    /** Sets the flag bits for the specified node. */
     protected final void setFlags(int x, int y, int flags) {
         int i = y * width + x;
         b[i] = (byte) (b[i] & WALL_MASK | flags << 4);
     }
 
-    /** Sets the flag bits for the specified location. */
+    /** Sets the flag bits for the specified node. */
     protected final void setFlags(Point p, int flags) {
         setFlags(p.getX(), p.getY(), flags);
     }
