@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import maze.Direction;
 import maze.Maze;
 import maze.RecursiveBacktracker;
-import maze.Sidewinder;
 import maze.TileMaze;
 
 public class MazeExample extends JPanel {
@@ -27,10 +26,17 @@ public class MazeExample extends JPanel {
     /** Maze path width. */
     private static final int N = 8;
 
+    private Dimension dimension;
     private List<Shape> shapes;
 
     public MazeExample() {
+        dimension = new Dimension();
         shapes = new ArrayList<Shape>();
+    }
+    
+    @Override
+    public Dimension getPreferredSize() {
+       return dimension;
     }
 
     @Override
@@ -79,7 +85,7 @@ public class MazeExample extends JPanel {
         }
         int panelWidth = maze.getWidth() * N + 1;
         int panelHeight = maze.getHeight() * N + 1;
-        setPreferredSize(new Dimension(panelWidth, panelHeight));
+        dimension.setSize(panelWidth, panelHeight);
     }
 
     public void loadTileMaze() {
@@ -95,7 +101,7 @@ public class MazeExample extends JPanel {
         }
         int panelWidth = tileMaze.getWidth() * N + 1;
         int panelHeight = tileMaze.getHeight() * N + 1;
-        setPreferredSize(new Dimension(panelWidth, panelHeight));
+        dimension.setSize(panelWidth, panelHeight);
     }
 
     public static void main(String[] args) {
