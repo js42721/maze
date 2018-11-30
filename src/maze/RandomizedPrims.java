@@ -148,14 +148,14 @@ public class RandomizedPrims extends Maze implements Serializable {
         if (n.y > 0 && getFlags(n.x, n.y - 1) == OUT) {
             markFrontier(n.x, n.y - 1, frontiers);
         }
-        if (n.x > 0 && getFlags(n.x - 1, n.y) == OUT) {
-            markFrontier(n.x - 1, n.y, frontiers);
+        if (n.x < getWidth() - 1 && getFlags(n.x + 1, n.y) == OUT) {
+            markFrontier(n.x + 1, n.y, frontiers);
         }
         if (n.y < getHeight() - 1 && getFlags(n.x, n.y + 1) == OUT) {
             markFrontier(n.x, n.y + 1, frontiers);
         }
-        if (n.x < getWidth() - 1 && getFlags(n.x + 1, n.y) == OUT) {
-            markFrontier(n.x + 1, n.y, frontiers);
+        if (n.x > 0 && getFlags(n.x - 1, n.y) == OUT) {
+            markFrontier(n.x - 1, n.y, frontiers);
         }
     }
 
