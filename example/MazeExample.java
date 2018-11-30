@@ -45,7 +45,7 @@ public class MazeExample extends JPanel {
 
     public void loadMaze() {
         shapes.clear();
-        Maze maze = new Sidewinder(WIDTH, HEIGHT);
+        Maze maze = new RecursiveBacktracker(WIDTH, HEIGHT);
         maze.generate();
         for (int x = 0; x < maze.getWidth(); ++x) {
             if (maze.isWall(x, 0, Direction.NORTH)) {

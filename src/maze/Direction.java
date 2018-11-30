@@ -1,6 +1,6 @@
 package maze;
 
-/** Represents a direction relative to a point in a maze. */
+/** Represents a cardinal direction. */
 public enum Direction {
     NORTH(1 << 0, 0, -1), EAST(1 << 1, 1, 0), SOUTH(1 << 2, 0, 1), WEST(1 << 3, -1, 0);
 
