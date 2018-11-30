@@ -1,9 +1,9 @@
 package maze;
 
 import java.io.Serializable;
+import java.util.Random;
 
-import fastrandom.FastRandom;
-import fastrandom.Taus88;
+import maze.coordinates.Node;
 
 /**
  * Implements Wilson's algorithm. The algorithm creates a uniform spanning
@@ -16,10 +16,10 @@ public class Wilsons extends Maze implements Serializable {
     /* The first two bits are reserved for directions. */
     private static final int IN = 1 << 2;
 
-    private final FastRandom rnd;
+    private final Random rnd;
 
     /**
-     * Sets the dimensions. Call {@code generate} to generate the maze.
+     * Sets the dimensions of the maze.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -27,12 +27,12 @@ public class Wilsons extends Maze implements Serializable {
      */
     public Wilsons(int width, int height) {
         super(width, height);
-        rnd = new Taus88();
+        rnd = new Random();
     }
 
     @Override
     public void generate() {
-        resetFill();
+        fill();
         wilson();
     }
 
@@ -93,7 +93,7 @@ public class Wilsons extends Maze implements Serializable {
             while (flags != IN) {
                 /* Carves along the saved exit direction. */
                 Direction d = directions[flags];
-                carve(trace, d);
+                removeWall(trace, d);
 
                 /* Marks the node as visited. */
                 setFlags(trace, IN);
@@ -117,16 +117,16 @@ public class Wilsons extends Maze implements Serializable {
     private int getMoves(Node n, Direction[] moves) {
         int count = 0;
         if (n.y > 0) {
-            moves[count++] = Direction.UP;
-        }
-        if (n.x > 0) {
-            moves[count++] = Direction.LEFT;
-        }
-        if (n.y < getHeight() - 1) {
-            moves[count++] = Direction.DOWN;
+            moves[count++] = Direction.NORTH;
         }
         if (n.x < getWidth() - 1) {
-            moves[count++] = Direction.RIGHT;
+            moves[count++] = Direction.EAST;
+        }
+        if (n.y < getHeight() - 1) {
+            moves[count++] = Direction.SOUTH;
+        }
+        if (n.x > 0) {
+            moves[count++] = Direction.WEST;
         }
         return count;
     }

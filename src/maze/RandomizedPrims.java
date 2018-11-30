@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
-import fastrandom.FastRandom;
-import fastrandom.Taus88;
+import maze.coordinates.Node;
+import maze.coordinates.Point;
 
 /**
  * Implements a randomized version of Prim's algorithm. This algorithm is not
@@ -24,11 +25,11 @@ public class RandomizedPrims extends Maze implements Serializable {
     private static final int IN       = 1 << 0;
     private static final int FRONTIER = 1 << 1;
 
-    private final FastRandom rnd;
+    private final Random rnd;
     private final Node start;
 
     /**
-     * Sets the dimensions. Call {code generate} to generate the maze.
+     * Sets the dimensions of the maze.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -36,74 +37,74 @@ public class RandomizedPrims extends Maze implements Serializable {
      */
     public RandomizedPrims(int width, int height) {
         super(width, height);
-        rnd = new Taus88();
+        rnd = new Random();
         start = new Node(rnd.nextInt(width), rnd.nextInt(height));
     }
 
     /**
-     * Sets the dimensions and the starting position. Call {@code generate} to
-     * generate the maze.
+     * Sets the dimensions of the maze and the starting point of the maze
+     * generation algorithm.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
-     * @param  startX the x-coordinate of the algorithm's starting position
-     * @param  startY the y-coordinate of the algorithm's starting position
+     * @param  startX the x-coordinate of the algorithm's starting point
+     * @param  startY the y-coordinate of the algorithm's starting point
      * @throws IllegalArgumentException if width or height is not positive
-     * @throws PositionOutOfBoundsException if (x, y) is out of bounds
+     * @throws OutOfBoundsException if (x, y) is out of bounds
      */
     public RandomizedPrims(int width, int height, int startX, int startY) {
         super(width, height);
-        checkPosition(startX, startY);
+        checkBounds(startX, startY);
         start = new Node(startX, startY);
-        rnd = new Taus88();
+        rnd = new Random();
     }
 
     /**
-     * Sets the dimensions and the starting position. Call {@code generate} to
-     * generate the maze.
+     * Sets the dimensions of the maze and the starting point of the maze
+     * generation algorithm.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
-     * @param  start the algorithm's starting position
+     * @param  start the algorithm's starting point
      * @throws IllegalArgumentException if width or height is not positive
-     * @throws PositionOutOfBoundsException if start is out of bounds
+     * @throws OutOfBoundsException if start is out of bounds
      * @throws NullPointerException if start is null
      */
-    public RandomizedPrims(int width, int height, Position start) {
+    public RandomizedPrims(int width, int height, Point start) {
         this(width, height, start.getX(), start.getY());
     }
 
     /**
-     * Sets the algorithm's starting position.
+     * Sets the starting point of the maze generation algorithm.
      *
-     * @param  x the x-coordinate of the starting position
-     * @param  y the y-coordinate of the starting position
-     * @throws PositionOutOfBoundsException if (x, y) is out of bounds
+     * @param  x the x-coordinate of the algorithm's starting point
+     * @param  y the y-coordinate of the algorithm's starting point
+     * @throws OutOfBoundsException if (x, y) is out of bounds
      */
     public void setStart(int x, int y) {
-        checkPosition(x, y);
+    	checkBounds(x, y);
         start.set(x, y);
     }
 
     /**
-     * Sets the algorithm's starting position.
+     * Sets the starting point of the maze generation algorithm.
      *
-     * @param  start the starting position
-     * @throws PositionOutOfBoundsException if start is out of bounds
+     * @param  start the algorithm's starting point
+     * @throws OutOfBoundsException if start is out of bounds
      * @throws NullPointerException if start is null
      */
-    public void setStart(Position start) {
+    public void setStart(Point start) {
         setStart(start.getX(), start.getY());
     }
 
-    /** Returns the algorithm's starting position. */
-    public Position getStart() {
+    /** Returns the starting point of the maze generation algorithm. */
+    public Point getStart() {
         return new Node(start);
     }
 
     @Override
     public void generate() {
-        resetFill();
+        fill();
         randomizedPrims(start);
     }
 
@@ -131,7 +132,7 @@ public class RandomizedPrims extends Maze implements Serializable {
              * Removes the wall between the frontier and the selected neighbor
              * and then marks the frontier as visited.
              */
-            carve(current, d);
+            removeWall(current, d);
             setFlags(current, IN);
 
             /* Looks for new frontiers. */
@@ -169,16 +170,16 @@ public class RandomizedPrims extends Maze implements Serializable {
     private int getVisitedNeighbors(Node n, Direction[] neighbors) {
         int count = 0;
         if (n.y > 0 && getFlags(n.x, n.y - 1) == IN) {
-            neighbors[count++] = Direction.UP;
-        }
-        if (n.x > 0 && getFlags(n.x - 1, n.y) == IN) {
-            neighbors[count++] = Direction.LEFT;
-        }
-        if (n.y < getHeight() - 1 && getFlags(n.x, n.y + 1) == IN) {
-            neighbors[count++] = Direction.DOWN;
+            neighbors[count++] = Direction.NORTH;
         }
         if (n.x < getWidth() - 1 && getFlags(n.x + 1, n.y) == IN) {
-            neighbors[count++] = Direction.RIGHT;
+            neighbors[count++] = Direction.EAST;
+        }
+        if (n.y < getHeight() - 1 && getFlags(n.x, n.y + 1) == IN) {
+            neighbors[count++] = Direction.SOUTH;
+        }
+        if (n.x > 0 && getFlags(n.x - 1, n.y) == IN) {
+            neighbors[count++] = Direction.WEST;
         }
         return count;
     }

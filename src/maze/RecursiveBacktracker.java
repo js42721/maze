@@ -1,9 +1,10 @@
 package maze;
 
 import java.io.Serializable;
+import java.util.Random;
 
-import fastrandom.FastRandom;
-import fastrandom.Taus88;
+import maze.coordinates.Node;
+import maze.coordinates.Point;
 
 /**
  * Implements the recursive backtracking algorithm. The algorithm works by
@@ -12,11 +13,11 @@ import fastrandom.Taus88;
 public class RecursiveBacktracker extends Maze implements Serializable {
     private static final long serialVersionUID = -5689416515127359434L;
 
-    private final FastRandom rnd;
+    private final Random rnd;
     private final Node start;
 
     /**
-     * Sets the dimensions. Call {@code generate} to generate the maze.
+     * Sets the dimensions of the maze.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -24,74 +25,74 @@ public class RecursiveBacktracker extends Maze implements Serializable {
      */
     public RecursiveBacktracker(int width, int height) {
         super(width, height);
-        rnd = new Taus88();
+        rnd = new Random();
         start = new Node(rnd.nextInt(width), rnd.nextInt(height));
     }
 
     /**
-     * Sets the dimensions and the starting position. Call {@code generate} to
-     * generate the maze.
+     * Sets the dimensions of the maze and the starting point of the maze
+     * generation algorithm.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
-     * @param  startX the x-coordinate of the algorithm's starting position
-     * @param  startY the y-coordinate of the algorithm's starting position
+     * @param  startX the x-coordinate of the algorithm's starting point
+     * @param  startY the y-coordinate of the algorithm's starting point
      * @throws IllegalArgumentException if width or height is not positive
-     * @throws PositionOutOfBoundsException if (x, y) is out of bounds
+     * @throws OutOfBoundsException if (x, y) is out of bounds
      */
     public RecursiveBacktracker(int width, int height, int startX, int startY) {
         super(width, height);
-        checkPosition(startX, startY);
+        checkBounds(startX, startY);
         start = new Node(startX, startY);
-        rnd = new Taus88();
+        rnd = new Random();
     }
 
     /**
-     * Sets the dimensions and the starting position. Call {@code generate} to
-     * generate the maze.
+     * Sets the dimensions of the maze and the starting point of the maze
+     * generation algorithm.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
-     * @param  start the algorithm's starting position
+     * @param  start the algorithm's starting point
      * @throws IllegalArgumentException if width or height is not positive
-     * @throws PositionOutOfBoundsException if start is out of bounds
+     * @throws OutOfBoundsException if start is out of bounds
      * @throws NullPointerException if start is null
      */
-    public RecursiveBacktracker(int width, int height, Position start) {
+    public RecursiveBacktracker(int width, int height, Point start) {
         this(width, height, start.getX(), start.getY());
     }
 
     /**
-     * Sets the algorithm's starting position.
+     * Sets the starting point of the maze generation algorithm.
      *
-     * @param  x the x-coordinate of the starting position
-     * @param  y the y-coordinate of the starting position
-     * @throws PositionOutOfBoundsException if (x, y) is out of bounds
+     * @param  startX the x-coordinate of the algorithm's starting point
+     * @param  startY the y-coordinate of the algorithm's starting point
+     * @throws OutOfBoundsException if (x, y) is out of bounds
      */
     public void setStart(int x, int y) {
-        checkPosition(x, y);
+    	checkBounds(x, y);
         start.set(x, y);
     }
 
     /**
-     * Sets the algorithm's starting position.
+     * Sets the starting point of the maze generation algorithm.
      *
-     * @param  start the starting position
-     * @throws PositionOutOfBoundsException if start is out of bounds
+     * @param  start the algorithm's starting point
+     * @throws OutOfBoundsException if start is out of bounds
      * @throws NullPointerException if start is null
      */
-    public void setStart(Position start) {
+    public void setStart(Point start) {
         setStart(start.getX(), start.getY());
     }
 
-    /** Returns the algorithm's starting position. */
-    public Position getStart() {
+    /** Returns the starting point of the maze generation algorithm. */
+    public Point getStart() {
         return new Node(start);
     }
 
     @Override
     public void generate() {
-        resetFill();
+        fill();
         recursiveBacktrack(start);
     }
 
@@ -116,7 +117,7 @@ public class RecursiveBacktracker extends Maze implements Serializable {
 
             /* Picks a random adjacent unvisited node and adds it to the maze. */
             Direction d = moves[rnd.nextInt(moveCount)];
-            carve(current, d);
+            removeWall(current, d);
 
             /* Updates the current node to the newly added node. */
             current.translate(d.dx, d.dy);
@@ -131,17 +132,17 @@ public class RecursiveBacktracker extends Maze implements Serializable {
     /** Gets the directions which point to adjacent unvisited nodes. */
     private int getMoves(Node n, Direction[] moves) {
         int count = 0;
-        if (n.y > 0 && isClosed(n.x, n.y - 1)) {
-            moves[count++] = Direction.UP;
+        if (n.y > 0 && isUnvisited(n.x, n.y - 1)) {
+            moves[count++] = Direction.NORTH;
         }
-        if (n.x > 0 && isClosed(n.x - 1, n.y)) {
-            moves[count++] = Direction.LEFT;
+        if (n.x < getWidth() - 1 && isUnvisited(n.x + 1, n.y)) {
+            moves[count++] = Direction.EAST;
         }
-        if (n.y < getHeight() - 1 && isClosed(n.x, n.y + 1)) {
-            moves[count++] = Direction.DOWN;
+        if (n.y < getHeight() - 1 && isUnvisited(n.x, n.y + 1)) {
+            moves[count++] = Direction.SOUTH;
         }
-        if (n.x < getWidth() - 1 && isClosed(n.x + 1, n.y)) {
-            moves[count++] = Direction.RIGHT;
+        if (n.x > 0 && isUnvisited(n.x - 1, n.y)) {
+            moves[count++] = Direction.WEST;
         }
         return count;
     }

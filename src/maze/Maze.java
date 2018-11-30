@@ -3,6 +3,8 @@ package maze;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import maze.coordinates.Point;
+
 /**
  * A two-dimensional maze representation. The walls of a maze node are stored
  * as four bit fields. Each node is given a byte, leaving four unused bits per
@@ -15,12 +17,12 @@ public abstract class Maze implements Serializable {
 
     private static final int WALL_MASK = 0xf;
 
-    private final byte[] maze;
+    private final byte[] b;
     private final int width;
     private final int height;
 
     /**
-     * Sets the dimensions.
+     * Sets the dimensions of the maze.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -32,7 +34,7 @@ public abstract class Maze implements Serializable {
         }
         this.width = width;
         this.height = height;
-        maze = new byte[width * height];
+        b = new byte[width * height];
     }
 
     /** Generates the maze. */
@@ -49,31 +51,116 @@ public abstract class Maze implements Serializable {
     }
 
     /**
-     * Checks if a certain wall exists at a position.
+     * Checks whether a location is walled off from a given direction.
      *
-     * @param  x the x-coordinate of the position
-     * @param  y the y-coordinate of the position
+     * @param  x the x-coordinate of the location
+     * @param  y the y-coordinate of the location
      * @param  d the direction to check
-     * @return true if the wall exists
-     * @throws PositionOutOfBoundsException if (x, y) is out of bounds
+     * @return true if (x, y) is walled off in direction d
+     * @throws OutOfBoundsException if (x, y) is out of bounds
      * @throws NullPointerException if d is null
      */
     public final boolean isWall(int x, int y, Direction d) {
-        checkPosition(x, y);
-        return (maze[y * width + x] & d.mask) != 0;
+        checkBounds(x, y);
+        return (b[y * width + x] & d.mask) != 0;
     }
 
     /**
-     * Checks if a certain wall exists at a position.
+     * Checks whether a location is walled off from a given direction.
      *
-     * @param  p the position
+     * @param  p the coordinates of the location
      * @param  d the direction to check
-     * @return true if the wall exists
-     * @throws PositionOutOfBoundsException if p is out of bounds
+     * @return true if p is walled off in direction d
+     * @throws OutOfBoundsException if p is out of bounds
      * @throws NullPointerException if an argument is null
      */
-    public final boolean isWall(Position p, Direction d) {
+    public final boolean isWall(Point p, Direction d) {
         return isWall(p.getX(), p.getY(), d);
+    }
+
+    /**
+     * Puts a wall in a given direction from a location.
+     * 
+     * @param  x the x-coordinate of the location
+     * @param  y the y-coordinate of the location
+     * @param  d the direction in which a wall is to be put
+     * @throws OutOfBoundsException if (x, y) is out of bounds
+     * @throws NullPointerException if d is null
+     */
+    public final void addWall(int x, int y, Direction d) {
+        checkBounds(x, y);
+        b[y * width + x] |= d.mask;
+        int tx = x + d.dx;
+        int ty = y + d.dy;
+        if (isInBounds(tx, ty)) {
+            b[ty * width + tx] |= d.getReverse().mask;
+        }
+    }
+
+    /**
+     * Puts a wall in a given direction from a location.
+     * 
+     * @param  p the coordinates of the location
+     * @param  d the direction in which a wall is to be put
+     * @throws OutOfBoundsException if p is out of bounds
+     * @throws NullPointerException if an argument is null
+     */
+    public final void addWall(Point p, Direction d) {
+        addWall(p.getX(), p.getY(), d);
+    }
+
+
+    /**
+     * Removes a wall in a given direction from a location.
+     * 
+     * @param  x the x-coordinate of the location
+     * @param  y the y-coordinate of the location
+     * @param  d the direction in which a wall is to be removed
+     * @throws OutOfBoundsException if (x, y) is out of bounds
+     * @throws NullPointerException if d is null
+     */
+    public final void removeWall(int x, int y, Direction d) {
+        checkBounds(x, y);
+        b[y * width + x] &= ~d.mask;
+        int tx = x + d.dx;
+        int ty = y + d.dy;
+        if (isInBounds(tx, ty)) {
+            b[ty * width + tx] &= ~d.getReverse().mask;
+        }
+    }
+
+    /**
+     * Removes a wall in a given direction from a location.
+     * 
+     * @param  p the coordinates of the location
+     * @param  d the direction in which a wall is to be removed
+     * @throws OutOfBoundsException if p is out of bounds
+     * @throws NullPointerException if an argument is null
+     */
+    public final void removeWall(Point p, Direction d) {
+        removeWall(p.getX(), p.getY(), d);
+    }
+
+    /** Puts walls on the border. */
+    public final void addBorder() {
+        for (int y = 0; y < height; ++y) {
+            b[y * width] |= Direction.WEST.mask;
+            b[(y + 1) * width - 1] |= Direction.EAST.mask;
+        }
+        for (int x = 0; x < width; ++x) {
+            b[x] |= Direction.NORTH.mask;
+            b[(height - 1) * width + x] |= Direction.SOUTH.mask;
+        }
+    }
+
+    /** Removes all walls. */
+    public final void clear() {
+        Arrays.fill(b, (byte) 0);
+    }
+
+    /** Puts walls everywhere. */
+    public final void fill() {
+        Arrays.fill(b, (byte) WALL_MASK);
     }
 
     @Override
@@ -82,7 +169,7 @@ public abstract class Maze implements Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append("+");
         for (int x = 0; x < width; ++x) {
-            if ((maze[x] & Direction.UP.mask) != 0) {
+            if ((b[x] & Direction.NORTH.mask) != 0) {
                 builder.append("---+");
             } else {
                 builder.append("   +");
@@ -91,13 +178,13 @@ public abstract class Maze implements Serializable {
         builder.append(lineSeparator);
         for (int y = 0; y < height; ++y) {
             int offset = y * width;
-            if ((maze[offset] & Direction.LEFT.mask) != 0) {
+            if ((b[offset] & Direction.WEST.mask) != 0) {
                 builder.append("|");
             } else {
                 builder.append(" ");
             }
             for (int x = 0; x < width; ++x) {
-                if ((maze[offset + x] & Direction.RIGHT.mask) != 0) {
+                if ((b[offset + x] & Direction.EAST.mask) != 0) {
                     builder.append("   |");
                 } else {
                     builder.append("    ");
@@ -106,7 +193,7 @@ public abstract class Maze implements Serializable {
             builder.append(lineSeparator);
             builder.append("+");
             for (int x = 0; x < width; ++x) {
-                if ((maze[offset + x] & Direction.DOWN.mask) != 0) {
+                if ((b[offset + x] & Direction.SOUTH.mask) != 0) {
                     builder.append("---+");
                 } else {
                     builder.append("   +");
@@ -116,199 +203,42 @@ public abstract class Maze implements Serializable {
         }
         return builder.toString();
     }
-
-    /** Fills the maze with walls (leaves flags intact). */
-    protected final void fillWalls() {
-        for (int i = 0; i < maze.length; ++i) {
-            maze[i] |= WALL_MASK;
-        }
+    
+    /** Checks if a location is walled off from all directions. */
+    protected final boolean isUnvisited(int x, int y) {
+        return (b[y * width + x] & WALL_MASK) == WALL_MASK;
     }
 
-    /** Removes all walls (leaves flags intact). */
-    protected final void clearWalls() {
-        for (int i = 0; i < maze.length; ++i) {
-            maze[i] &= ~WALL_MASK;
-        }
-    }
-
-    /** Clears all walls and flags. */
-    protected final void reset() {
-        Arrays.fill(maze, (byte) 0);
-    }
-
-    /** Fills the maze with walls and clears all flags. */
-    protected final void resetFill() {
-        Arrays.fill(maze, (byte) WALL_MASK);
-    }
-
-    /** Creates the borders. */
-    protected final void addBorders() {
-        for (int y = 0; y < height; ++y) {
-            maze[y * width] |= Direction.LEFT.mask;
-            maze[(y + 1) * width - 1] |= Direction.RIGHT.mask;
-        }
-        for (int x = 0; x < width; ++x) {
-            maze[x] |= Direction.UP.mask;
-            maze[(height - 1) * width + x] |= Direction.DOWN.mask;
-        }
-    }
-
-    /** Places a wall between two positions. */
-    protected final void addWall(int x, int y, Direction d) {
-        assert !isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is a border";
-        maze[y * width + x] |= d.mask;
-        maze[(y + d.dy) * width + x + d.dx] |= d.getReverse().mask;
-    }
-
-    /** Places a wall between two positions. */
-    protected final void addWall(Position p, Direction d) {
-        addWall(p.getX(), p.getY(), d);
-    }
-
-    /** Removes the wall between two positions. */
-    protected final void carve(int x, int y, Direction d) {
-        assert !isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is a border";
-        maze[y * width + x] &= ~d.mask;
-        maze[(y + d.dy) * width + x + d.dx] &= ~d.getReverse().mask;
-    }
-
-    /** Removes the wall between two positions. */
-    protected final void carve(Position p, Direction d) {
-        carve(p.getX(), p.getY(), d);
-    }
-
-    /** Adds a wall to the borders. */
-    protected final void addBorder(int x, int y, Direction d) {
-        assert isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is not a border";
-        maze[y * width + x] |= d.mask;
-    }
-
-    /** Adds a wall to the borders. */
-    protected final void addBorder(Position p, Direction d) {
-        addBorder(p.getX(), p.getY(), d);
-    }
-
-    /** Removes a wall from the borders. */
-    protected final void removeBorder(int x, int y, Direction d) {
-        assert isBorder(x, y, d) : "(" + x + ", " + y + "), " + d + " is not a border";
-        maze[y * width + x] &= ~d.mask;
-    }
-
-    /** Removes a wall from the borders. */
-    protected final void removeBorder(Position p, Direction d) {
-        removeBorder(p.getX(), p.getY(), d);
-    }
-
-    /** Checks if a position is free of walls on all sides. */
-    protected final boolean isClear(int x, int y) {
-        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
-        return (maze[y * width + x] & WALL_MASK) == 0;
-    }
-
-    /** Checks if a position is free of walls on all sides. */
-    protected final boolean isClear(Position p) {
-        return isClear(p.getX(), p.getY());
-    }
-
-    /** Checks if a position is blocked by walls on all sides. */
-    protected final boolean isClosed(int x, int y) {
-        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
-        return (maze[y * width + x] & WALL_MASK) == WALL_MASK;
-    }
-
-    /** Checks if a position is blocked by walls on all sides. */
-    protected final boolean isClosed(Position p) {
-        return isClosed(p.getX(), p.getY());
-    }
-
-    /** Checks if a wall is a border. */
-    protected final boolean isBorder(int x, int y, Direction d) {
-        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
-        int validBorders = 0;
-        if (y == 0) {
-            validBorders |= Direction.UP.mask;
-        }
-        if (x == 0) {
-            validBorders |= Direction.LEFT.mask;
-        }
-        if (y == height - 1) {
-            validBorders |= Direction.DOWN.mask;
-        }
-        if (x == width - 1) {
-            validBorders |= Direction.RIGHT.mask;
-        }
-        return (validBorders & d.mask) != 0;
-    }
-
-    /** Checks if a position is in maze bounds. */
+    /** Checks if coordinates are in bounds. */
     protected final boolean isInBounds(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
-    /** Checks if a position is in bounds and throws an exception if it isn't. */
-    protected final void checkPosition(int x, int y) {
+    /** Checks if coordinates are in bounds and throws an exception if not. */
+    protected final void checkBounds(int x, int y) {
         if (!isInBounds(x, y)) {
-            throw new PositionOutOfBoundsException("(" + x + ", " + y + ")");
+            throw new OutOfBoundsException("(" + x + ", " + y + ")");
         }
     }
 
-    /** Returns the flag bits for the specified position. */
+    /** Returns the flag bits for the specified location. */
     protected final int getFlags(int x, int y) {
-        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
-        return maze[y * width + x] >>> 4;
+        return b[y * width + x] >>> 4;
     }
 
-    /** Returns the flag bits for the specified position. */
-    protected final int getFlags(Position p) {
+    /** Returns the flag bits for the specified location. */
+    protected final int getFlags(Point p) {
         return getFlags(p.getX(), p.getY());
     }
 
-    /** Sets the flag bits for the specified position. */
+    /** Sets the flag bits for the specified location. */
     protected final void setFlags(int x, int y, int flags) {
-        assert isInBounds(x, y) : "(" + x + ", " + y + ") is out of bounds";
         int i = y * width + x;
-        maze[i] = (byte) (maze[i] & WALL_MASK | flags << 4);
+        b[i] = (byte) (b[i] & WALL_MASK | flags << 4);
     }
 
-    /** Sets the flag bits for the specified position. */
-    protected final void setFlags(Position p, int flags) {
+    /** Sets the flag bits for the specified location. */
+    protected final void setFlags(Point p, int flags) {
         setFlags(p.getX(), p.getY(), flags);
-    }
-
-    /** Clears all flags. */
-    protected final void resetFlags() {
-        for (int i = 0; i < maze.length; ++i) {
-            maze[i] &= WALL_MASK;
-        }
-    }
-
-    public enum Direction {
-        UP   (1 << 0,  0, -1),
-        LEFT (1 << 1, -1,  0),
-        DOWN (1 << 2,  0,  1),
-        RIGHT(1 << 3,  1,  0);
-
-        public final int dx;
-        public final int dy;
-
-        private final int mask;
-        private Direction reverse;
-
-        static {
-            UP.reverse    = DOWN;
-            LEFT.reverse  = RIGHT;
-            DOWN.reverse  = UP;
-            RIGHT.reverse = LEFT;
-        }
-
-        Direction(int mask, int dx, int dy) {
-            this.mask = mask;
-            this.dx = dx;
-            this.dy = dy;
-        }
-
-        public Direction getReverse() {
-            return reverse;
-        }
     }
 }

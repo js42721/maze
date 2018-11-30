@@ -1,7 +1,7 @@
-package maze;
+package maze.coordinates;
 
 /** A pair of coordinates. */
-public abstract class Position {
+public abstract class Point {
     /** Returns the x-coordinate. */
     public abstract int getX();
 
@@ -23,8 +23,8 @@ public abstract class Position {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Position) {
-            Position p = (Position) obj;
+        if (obj instanceof Point) {
+            Point p = (Point) obj;
             return getX() == p.getX() && getY() == p.getY();
         }
         return false;

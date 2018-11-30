@@ -1,10 +1,8 @@
 package maze;
 
 import java.io.Serializable;
-
-import datastructures.DisjointSetForest;
-import fastrandom.FastRandom;
-import fastrandom.Taus88;
+import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Implements a randomized version of Kruskal's algorithm. It is essentially
@@ -14,46 +12,43 @@ import fastrandom.Taus88;
 public class RandomizedKruskals extends Maze implements Serializable {
     private static final long serialVersionUID = 612546716632291472L;
 
-    private final FastRandom rnd;
+    private final Random rnd;
 
     /**
-     * Sets the dimensions. Call {@code generate} to generate the maze.
+     * Sets the dimensions of the maze.
      *
-     * @param  width the width of the maze
-     * @param  height the height of the maze
+     * @param width  the width of the maze
+     * @param height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
      */
     public RandomizedKruskals(int width, int height) {
         super(width, height);
-        rnd = new Taus88();
+        rnd = new Random();
     }
 
     @Override
     public void generate() {
-        resetFill();
+        fill();
         randomizedKruskals();
     }
 
     private void randomizedKruskals() {
-        /* Gathers all the edges. */
+        /* Creates a list of all edges. */
         int[] edges = getEdges();
 
-        /* Allows us to iterate over the edges in random order. */
+        /* Randomizes the order of the edge list. */
         shuffle(edges);
 
-        /* Creates a disjoint set forest containing a set for each node. */
+        /* Creates a disjoint set forest with a set for each node. */
         DisjointSetForest dsf = new DisjointSetForest(getWidth() * getHeight());
 
-        /*
-         * Processes each edge (in random order) by merging its nodes if they
-         * belong to different sets.
-         */
+        /* Merges the nodes if they belong to different sets. */
         for (int e : edges) {
-            Direction d = (e < 0) ? Direction.RIGHT : Direction.DOWN;
+            Direction d = (e < 0) ? Direction.EAST : Direction.SOUTH;
             int u = e & 0x7fffffff;
             int v = u + d.dy * getWidth() + d.dx;
             if (dsf.union(u, v)) {
-                carve(u % getWidth(), u / getWidth(), d);
+                removeWall(u % getWidth(), u / getWidth(), d);
             }
         }
     }
@@ -93,6 +88,51 @@ public class RandomizedKruskals extends Maze implements Serializable {
             int tmp = array[j];
             array[j] = array[i];
             array[i] = tmp;
+        }
+    }
+
+    /** Allows for efficient union/find operations. */
+    private static class DisjointSetForest {
+        int[] a;
+
+        DisjointSetForest(int n) {
+            a = new int[n];
+            Arrays.fill(a, -1);
+        }
+
+        int find(int x) {
+            int root = x;
+            int current = a[x];
+            while (current >= 0) {
+                root = current;
+                current = a[current];
+            }
+            current = x;
+            while (current != root) {
+                int old = current;
+                current = a[current];
+                a[old] = root;
+            }
+            return root;
+        }
+
+        boolean union(int x, int y) {
+            int rootX = find(x);
+            int rootY = find(y);
+            if (rootX == rootY) {
+                return false;
+            }
+            int rankX = a[rootX];
+            int rankY = a[rootY];
+            if (rankX > rankY) {
+                a[rootX] = rootY;
+            } else {
+                if (rankX == rankY) {
+                    --a[rootX];
+                }
+                a[rootY] = rootX;
+            }
+            return true;
         }
     }
 }

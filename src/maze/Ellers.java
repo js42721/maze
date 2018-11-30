@@ -1,18 +1,16 @@
 package maze;
 
 import java.io.Serializable;
-
-import fastrandom.FastRandom;
-import fastrandom.Taus88;
+import java.util.Random;
 
 /** Implements an algorithm which some people refer to as Eller's algorithm. */
 public class Ellers extends Maze implements Serializable {
     private static final long serialVersionUID = -4403644618765868512L;
 
-    private final FastRandom rnd;
+    private final Random rnd;
 
     /**
-     * Sets the dimensions. Call {@code generate} to generate the maze.
+     * Sets the dimensions of the maze.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -20,12 +18,12 @@ public class Ellers extends Maze implements Serializable {
      */
     public Ellers(int width, int height) {
         super(width, height);
-        rnd = new Taus88();
+        rnd = new Random();
     }
 
     @Override
     public void generate() {
-        resetFill();
+        fill();
         ellers();
     }
 
@@ -51,7 +49,7 @@ public class Ellers extends Maze implements Serializable {
                     right[left[x + 1]] = right[x];
                     right[x] = x + 1;
                     left[x + 1] = x;
-                    carve(x, y, Direction.RIGHT);
+                    removeWall(x, y, Direction.EAST);
                 }
                 /* Creates vertical passages. */
                 if (right[x] != x && rnd.nextInt(5) < 3) {
@@ -59,7 +57,7 @@ public class Ellers extends Maze implements Serializable {
                     right[left[x]] = right[x];
                     left[x] = right[x] = x;
                 } else {
-                    carve(x, y, Direction.DOWN);
+                    removeWall(x, y, Direction.SOUTH);
                 }
             }
 
@@ -69,7 +67,7 @@ public class Ellers extends Maze implements Serializable {
                 right[left[xEnd]] = right[xEnd];
                 left[xEnd] = right[xEnd] = xEnd;
             } else {
-                carve(xEnd, y, Direction.DOWN);
+                removeWall(xEnd, y, Direction.SOUTH);
             }
         }
 
@@ -80,7 +78,7 @@ public class Ellers extends Maze implements Serializable {
                 right[left[x + 1]] = right[x];
                 right[x] = x + 1;
                 left[x + 1] = x;
-                carve(x, yEnd, Direction.RIGHT);
+                removeWall(x, yEnd, Direction.EAST);
             }
         }
     }

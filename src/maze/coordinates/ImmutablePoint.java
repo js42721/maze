@@ -1,32 +1,32 @@
-package maze;
+package maze.coordinates;
 
 import java.io.Serializable;
 
 /** An immutable pair of coordinates. */
-public final class ImmutablePosition extends Position implements Serializable {
+public final class ImmutablePoint extends Point implements Serializable {
     private static final long serialVersionUID = 3157903951803175800L;
 
     public final int x;
     public final int y;
 
     /**
-     * Creates a position with the specified coordinates.
+     * Creates a point with the specified coordinates.
      *
      * @param x the x-coordinate
      * @param y the y-coordinate
      */
-    public ImmutablePosition(int x, int y) {
+    public ImmutablePoint(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
     /**
-     * Creates a position from another position.
+     * Creates a point from another point.
      *
-     * @param  other the other position
+     * @param  other the other point
      * @throws NullPointerException if other is null
      */
-    public ImmutablePosition(ImmutablePosition other) {
+    public ImmutablePoint(ImmutablePoint other) {
         this(other.x, other.y);
     }
 

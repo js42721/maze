@@ -1,9 +1,7 @@
 package maze;
 
 import java.io.Serializable;
-
-import fastrandom.FastRandom;
-import fastrandom.Taus88;
+import java.util.Random;
 
 /**
  * Implements the binary tree algorithm. The algorithm carves in one of two
@@ -13,10 +11,10 @@ import fastrandom.Taus88;
 public class BinaryTreeMaze extends Maze implements Serializable {
     private static final long serialVersionUID = -7079713075260480096L;
 
-    private final FastRandom rnd;
+    private final Random rnd;
 
     /**
-     * Sets the dimensions. Call {@code generate} to generate the maze.
+     * Sets the dimensions of the maze.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -24,20 +22,20 @@ public class BinaryTreeMaze extends Maze implements Serializable {
      */
     public BinaryTreeMaze(int width, int height) {
         super(width, height);
-        rnd = new Taus88();
+        rnd = new Random();
     }
 
     @Override
     public void generate() {
-        reset();
-        addBorders();
+        clear();
+        addBorder();
         binaryTreeMaze();
     }
 
     private void binaryTreeMaze() {
         for (int y = 1; y < getHeight(); ++y) {
             for (int x = 1; x < getWidth(); ++x) {
-                addWall(x, y, rnd.nextBoolean() ? Direction.LEFT : Direction.UP);
+                addWall(x, y, rnd.nextBoolean() ? Direction.WEST : Direction.NORTH);
             }
         }
     }

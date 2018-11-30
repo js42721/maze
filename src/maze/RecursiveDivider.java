@@ -1,13 +1,11 @@
 package maze;
 
 import java.io.Serializable;
-
-import fastrandom.FastRandom;
-import fastrandom.Taus88;
+import java.util.Random;
 
 /**
  * Implements the recursive division algorithm. The algorithm starts with an
- * empty maze and recursively divides it into two with a randomly placed
+ * empty space and recursively divides it into two with a randomly placed
  * horizontal or vertical wall.
  */
 public class RecursiveDivider extends Maze implements Serializable {
@@ -16,10 +14,10 @@ public class RecursiveDivider extends Maze implements Serializable {
     private static final boolean HORIZONTAL = true;
     private static final boolean VERTICAL   = false;
 
-    private final FastRandom rnd;
+    private final Random rnd;
 
     /**
-     * Sets the dimensions. Call {@code generate} to generate the maze.
+     * Sets the dimensions of the maze.
      *
      * @param  width the width of the maze
      * @param  height the height of the maze
@@ -27,13 +25,13 @@ public class RecursiveDivider extends Maze implements Serializable {
      */
     public RecursiveDivider(int width, int height) {
         super(width, height);
-        rnd = new Taus88();
+        rnd = new Random();
     }
 
     @Override
     public void generate() {
-        reset();
-        addBorders();
+        clear();
+        addBorder();
         recursiveDivision(0, 0, getWidth(), getHeight());
     }
 
@@ -49,9 +47,9 @@ public class RecursiveDivider extends Maze implements Serializable {
             int tx = x + width, ty = y + height;
             int wy = rnd.nextInt((ty - 1) - y) + y; // Picks a random location.
             for (int wx = x; wx < tx; ++wx) { // Places the wall.
-                addWall(wx, wy, Direction.DOWN);
+                addWall(wx, wy, Direction.SOUTH);
             }
-            carve(rnd.nextInt(tx - x) + x, wy, Direction.DOWN); // Makes an opening.
+            removeWall(rnd.nextInt(tx - x) + x, wy, Direction.SOUTH); // Makes an opening.
             bx = x;
             by = wy + 1;
             bw = width;
@@ -62,9 +60,9 @@ public class RecursiveDivider extends Maze implements Serializable {
             int tx = x + width, ty = y + height;
             int wx = rnd.nextInt((tx - 1) - x) + x;
             for (int wy = y; wy < ty; ++wy) {
-                addWall(wx, wy, Direction.RIGHT);
+                addWall(wx, wy, Direction.EAST);
             }
-            carve(wx, rnd.nextInt(ty - y) + y, Direction.RIGHT);
+            removeWall(wx, rnd.nextInt(ty - y) + y, Direction.EAST);
             bx = wx + 1;
             by = y;
             bw = tx - wx - 1;

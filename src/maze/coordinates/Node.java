@@ -1,9 +1,9 @@
-package maze;
+package maze.coordinates;
 
 import java.io.Serializable;
 
 /** Represents a maze node. */
-public class Node extends Position implements Serializable {
+public class Node extends Point implements Serializable {
     private static final long serialVersionUID = -243974042045188243L;
 
     public int x;
