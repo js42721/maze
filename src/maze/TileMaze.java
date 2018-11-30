@@ -13,8 +13,7 @@ public class TileMaze implements Serializable {
     private int height;
 
     /**
-     * Creates a tile maze wrapper around the specified {@link Maze} object,
-     * allowing tile-centric interaction.
+     * Creates a tile maze wrapper around the specified {@link Maze} object.
      *
      * @param  maze the {@link Maze} object to be wrapped
      * @throws NullPointerException if maze is null

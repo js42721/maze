@@ -51,12 +51,12 @@ public abstract class Maze implements Serializable {
     }
 
     /**
-     * Checks whether a node is walled off from a given direction.
+     * Checks for the presence of a wall at a node.
      *
      * @param  x the x-coordinate of the node
      * @param  y the y-coordinate of the node
      * @param  d the direction to check
-     * @return true if the wall exists
+     * @return true if the wall is present
      * @throws OutOfBoundsException if (x, y) is out of bounds
      * @throws NullPointerException if d is null
      */
@@ -66,11 +66,11 @@ public abstract class Maze implements Serializable {
     }
 
     /**
-     * Checks whether a node is walled off from a given direction.
+     * Checks for the presence of a wall at a node.
      *
      * @param  p the coordinates of the node
      * @param  d the direction to check
-     * @return true if the wall exists
+     * @return true if the wall is present
      * @throws OutOfBoundsException if p is out of bounds
      * @throws NullPointerException if an argument is null
      */
