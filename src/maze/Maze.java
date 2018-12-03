@@ -109,6 +109,23 @@ public abstract class Maze implements Serializable {
         addWall(p.getX(), p.getY(), d);
     }
 
+    /** Puts walls on the border. */
+    public final void addBorder() {
+        for (int y = 0; y < height; ++y) {
+            b[y * width] |= Direction.WEST.mask;
+            b[(y + 1) * width - 1] |= Direction.EAST.mask;
+        }
+        for (int x = 0; x < width; ++x) {
+            b[x] |= Direction.NORTH.mask;
+            b[(height - 1) * width + x] |= Direction.SOUTH.mask;
+        }
+    }
+
+    /** Puts walls everywhere. */
+    public final void fill() {
+        Arrays.fill(b, (byte) WALL_MASK);
+    }
+
     /**
      * Removes a wall from a node.
      * 
@@ -140,26 +157,47 @@ public abstract class Maze implements Serializable {
         removeWall(p.getX(), p.getY(), d);
     }
 
-    /** Puts walls on the border. */
-    public final void addBorder() {
-        for (int y = 0; y < height; ++y) {
-            b[y * width] |= Direction.WEST.mask;
-            b[(y + 1) * width - 1] |= Direction.EAST.mask;
-        }
-        for (int x = 0; x < width; ++x) {
-            b[x] |= Direction.NORTH.mask;
-            b[(height - 1) * width + x] |= Direction.SOUTH.mask;
-        }
-    }
-
     /** Removes all walls. */
     public final void clear() {
         Arrays.fill(b, (byte) 0);
     }
 
-    /** Puts walls everywhere. */
-    public final void fill() {
-        Arrays.fill(b, (byte) WALL_MASK);
+    /** Returns the flag bits for a node. */
+    protected final int getFlags(int x, int y) {
+        return b[y * width + x] >>> 4;
+    }
+
+    /** Returns the flag bits for a node. */
+    protected final int getFlags(Point p) {
+        return getFlags(p.getX(), p.getY());
+    }
+
+    /** Sets the flag bits for a node. */
+    protected final void setFlags(int x, int y, int flags) {
+        int i = y * width + x;
+        b[i] = (byte) (b[i] & WALL_MASK | flags << 4);
+    }
+
+    /** Sets the flag bits for a node. */
+    protected final void setFlags(Point p, int flags) {
+        setFlags(p.getX(), p.getY(), flags);
+    }
+
+    /** Checks if coordinates are in bounds. */
+    protected final boolean isInBounds(int x, int y) {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
+    /** Checks if coordinates are in bounds and throws an exception if not. */
+    protected final void checkBounds(int x, int y) {
+        if (!isInBounds(x, y)) {
+            throw new OutOfBoundsException("(" + x + ", " + y + ")");
+        }
+    }
+
+    /** Checks if a node is walled off from all directions. */
+    protected final boolean isUnvisited(int x, int y) {
+        return (b[y * width + x] & WALL_MASK) == WALL_MASK;
     }
 
     @Override
@@ -201,43 +239,5 @@ public abstract class Maze implements Serializable {
             builder.append(lineSeparator);
         }
         return builder.toString();
-    }
-
-    /** Checks if a node is walled off from all directions. */
-    protected final boolean isUnvisited(int x, int y) {
-        return (b[y * width + x] & WALL_MASK) == WALL_MASK;
-    }
-
-    /** Checks if coordinates are in bounds. */
-    protected final boolean isInBounds(int x, int y) {
-        return x >= 0 && x < width && y >= 0 && y < height;
-    }
-
-    /** Checks if coordinates are in bounds and throws an exception if not. */
-    protected final void checkBounds(int x, int y) {
-        if (!isInBounds(x, y)) {
-            throw new OutOfBoundsException("(" + x + ", " + y + ")");
-        }
-    }
-
-    /** Returns the flag bits for the specified node. */
-    protected final int getFlags(int x, int y) {
-        return b[y * width + x] >>> 4;
-    }
-
-    /** Returns the flag bits for the specified node. */
-    protected final int getFlags(Point p) {
-        return getFlags(p.getX(), p.getY());
-    }
-
-    /** Sets the flag bits for the specified node. */
-    protected final void setFlags(int x, int y, int flags) {
-        int i = y * width + x;
-        b[i] = (byte) (b[i] & WALL_MASK | flags << 4);
-    }
-
-    /** Sets the flag bits for the specified node. */
-    protected final void setFlags(Point p, int flags) {
-        setFlags(p.getX(), p.getY(), flags);
     }
 }
