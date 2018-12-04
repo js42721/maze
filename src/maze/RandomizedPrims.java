@@ -82,7 +82,7 @@ public class RandomizedPrims extends Maze implements Serializable {
      * @throws OutOfBoundsException if (x, y) is out of bounds
      */
     public void setStart(int x, int y) {
-    	checkBounds(x, y);
+        checkBounds(x, y);
         start.set(x, y);
     }
 

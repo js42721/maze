@@ -6,11 +6,10 @@ import java.util.Arrays;
 import maze.coordinates.Point;
 
 /**
- * A two-dimensional maze representation. The walls of a maze node are stored
- * as four bit fields. Each node is given a byte, leaving four unused bits per
+ * A two-dimensional maze representation. The walls of a maze node are stored as
+ * four bit fields. Each node is given a byte, leaving four unused bits per
  * node. These unused bits are made accessible to subclasses since they can be
- * useful when implementing maze generation algorithms that need to label
- * nodes.
+ * useful when implementing maze generation algorithms that need to label nodes.
  */
 public abstract class Maze implements Serializable {
     private static final long serialVersionUID = 6114059191423368387L;
@@ -24,7 +23,7 @@ public abstract class Maze implements Serializable {
     /**
      * Sets the dimensions of the maze.
      *
-     * @param  width the width of the maze
+     * @param  width  the width of the maze
      * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
      */
