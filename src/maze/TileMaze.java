@@ -99,6 +99,12 @@ public class TileMaze implements Serializable {
         return isWall(p.getX(), p.getY());
     }
 
+    private void checkBounds(int x, int y) {
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            throw new OutOfBoundsException("(" + x + ", " + y + ")");
+        }
+    }
+
     @Override
     public String toString() {
         String lineSeparator = System.getProperty("line.separator");
@@ -114,11 +120,5 @@ public class TileMaze implements Serializable {
             builder.append(lineSeparator);
         }
         return builder.toString();
-    }
-
-    private void checkBounds(int x, int y) {
-        if (x < 0 || x >= width || y < 0 || y >= height) {
-            throw new OutOfBoundsException("(" + x + ", " + y + ")");
-        }
     }
 }
