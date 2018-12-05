@@ -2,7 +2,10 @@ package maze;
 
 /** Represents a cardinal direction. */
 public enum Direction {
-    NORTH(1 << 0, 0, -1), EAST(1 << 1, 1, 0), SOUTH(1 << 2, 0, 1), WEST(1 << 3, -1, 0);
+    NORTH(1 << 0,  0, -1),
+    EAST (1 << 1,  1,  0),
+    SOUTH(1 << 2,  0,  1),
+    WEST (1 << 3, -1,  0);
 
     public final int mask;
     public final int dx;

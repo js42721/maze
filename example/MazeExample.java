@@ -33,7 +33,7 @@ public class MazeExample extends JPanel {
         dimension = new Dimension();
         shapes = new ArrayList<Shape>();
     }
-    
+
     @Override
     public Dimension getPreferredSize() {
        return dimension;
