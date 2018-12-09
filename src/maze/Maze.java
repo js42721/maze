@@ -213,14 +213,14 @@ public abstract class Maze implements Serializable {
         }
         builder.append(lineSeparator);
         for (int y = 0; y < height; ++y) {
-            int offset = y * width;
-            if ((b[offset] & Direction.WEST.mask) != 0) {
+            int yw = y * width;
+            if ((b[yw] & Direction.WEST.mask) != 0) {
                 builder.append("|");
             } else {
                 builder.append(" ");
             }
             for (int x = 0; x < width; ++x) {
-                if ((b[offset + x] & Direction.EAST.mask) != 0) {
+                if ((b[yw + x] & Direction.EAST.mask) != 0) {
                     builder.append("   |");
                 } else {
                     builder.append("    ");
@@ -229,7 +229,7 @@ public abstract class Maze implements Serializable {
             builder.append(lineSeparator);
             builder.append("+");
             for (int x = 0; x < width; ++x) {
-                if ((b[offset + x] & Direction.SOUTH.mask) != 0) {
+                if ((b[yw + x] & Direction.SOUTH.mask) != 0) {
                     builder.append("---+");
                 } else {
                     builder.append("   +");
