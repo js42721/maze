@@ -15,9 +15,9 @@ public enum Direction {
 
     static {
         NORTH.reverse = SOUTH;
-        EAST.reverse = WEST;
+        EAST.reverse  = WEST;
         SOUTH.reverse = NORTH;
-        WEST.reverse = EAST;
+        WEST.reverse  = EAST;
     }
 
     Direction(int mask, int dx, int dy) {
