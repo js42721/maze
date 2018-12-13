@@ -14,7 +14,7 @@ import maze.coordinates.Point;
 public abstract class Maze implements Serializable {
     private static final long serialVersionUID = 6114059191423368387L;
 
-    private static final int LN_MASK = 0xf;
+    private static final int WALL_MASK = 0xf;
 
     private final byte[] b;
     private final int width;
@@ -122,7 +122,7 @@ public abstract class Maze implements Serializable {
 
     /** Puts walls everywhere. */
     public final void fill() {
-        Arrays.fill(b, (byte) LN_MASK);
+        Arrays.fill(b, (byte) WALL_MASK);
     }
 
     /**
@@ -163,7 +163,7 @@ public abstract class Maze implements Serializable {
 
     /** Returns the flag bits for a node. */
     protected final int getFlags(int x, int y) {
-        return b[y * width + x] >> 4 & LN_MASK;
+        return (b[y * width + x] >> 4) & WALL_MASK;
     }
 
     /** Returns the flag bits for a node. */
@@ -174,7 +174,7 @@ public abstract class Maze implements Serializable {
     /** Sets the flag bits for a node. */
     protected final void setFlags(int x, int y, int flags) {
         int i = y * width + x;
-        b[i] = (byte) (b[i] & LN_MASK | flags << 4);
+        b[i] = (byte) ((b[i] & WALL_MASK) | (flags << 4));
     }
 
     /** Sets the flag bits for a node. */
@@ -196,7 +196,7 @@ public abstract class Maze implements Serializable {
 
     /** Checks if a node is walled off from all directions. */
     protected final boolean isUnvisited(int x, int y) {
-        return (b[y * width + x] & LN_MASK) == LN_MASK;
+        return (b[y * width + x] & WALL_MASK) == WALL_MASK;
     }
 
     @Override
