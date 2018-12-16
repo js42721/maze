@@ -36,7 +36,7 @@ public class MazeExample extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-       return dimension;
+        return dimension;
     }
 
     @Override
