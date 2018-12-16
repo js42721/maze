@@ -163,6 +163,7 @@ public abstract class Maze implements Serializable {
 
     /** Returns the flag bits for a node. */
     protected final int getFlags(int x, int y) {
+        /* Mask is required b/c of sign extension from widening conversion. */
         return (b[y * width + x] >> 4) & WALL_MASK;
     }
 
