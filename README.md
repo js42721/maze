@@ -1,7 +1,9 @@
 Maze
 ====
 
-A small Java library for generating 2D orthogonal "perfect" mazes. It contains implementations of the following maze generation algorithms:
+A small Java library for generating 2D orthogonal "perfect" mazes. 
+
+The following maze generation algorithms are included:
 
 * [Binary tree algorithm](src/maze/BinaryTreeMaze.java)
 * [Eller's algorithm](src/maze/Ellers.java)
@@ -12,7 +14,7 @@ A small Java library for generating 2D orthogonal "perfect" mazes. It contains i
 * [Sidewinder](src/maze/Sidewinder.java)
 * [Wilson's algorithm](src/maze/Wilsons.java)
 
-It also includes a [wrapper class](src/maze/TileMaze.java) that provides a tile-centric interface, in case you would rather deal with a maze as a grid of tiles than a collection of lines.
+Also included is a [wrapper class](src/maze/TileMaze.java) that provides a tile-centric interface, in case you would rather deal with a maze as a grid of tiles than a collection of lines.
 
 A maze generated using recursive backtracking:
 
