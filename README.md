@@ -14,7 +14,7 @@ The following maze generation algorithms are included:
 * [Sidewinder](src/maze/Sidewinder.java)
 * [Wilson's algorithm](src/maze/Wilsons.java)
 
-Also included is a [wrapper class](src/maze/TileMaze.java) that provides a tile-centric interface, in case you would rather deal with a maze as a grid of tiles than a collection of lines.
+Also included is a [wrapper class](src/maze/TileMaze.java) that provides a tile-centric interface, in case you want to treat a maze as a grid of tiles rather than a collection of lines.
 
 A maze generated using recursive backtracking:
 
