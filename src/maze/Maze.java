@@ -40,12 +40,12 @@ public abstract class Maze implements Serializable {
     public abstract void generate();
 
     /** Returns the width of the maze. */
-    public final int getWidth() {
+    public int getWidth() {
         return width;
     }
 
     /** Returns the height of the maze. */
-    public final int getHeight() {
+    public int getHeight() {
         return height;
     }
 
@@ -59,7 +59,7 @@ public abstract class Maze implements Serializable {
      * @throws OutOfBoundsException if (x, y) is out of bounds
      * @throws NullPointerException if d is null
      */
-    public final boolean isWall(int x, int y, Direction d) {
+    public boolean isWall(int x, int y, Direction d) {
         checkBounds(x, y);
         return (b[y * width + x] & d.mask) != 0;
     }
@@ -73,7 +73,7 @@ public abstract class Maze implements Serializable {
      * @throws OutOfBoundsException if p is out of bounds
      * @throws NullPointerException if an argument is null
      */
-    public final boolean isWall(Point p, Direction d) {
+    public boolean isWall(Point p, Direction d) {
         return isWall(p.getX(), p.getY(), d);
     }
 
@@ -86,7 +86,7 @@ public abstract class Maze implements Serializable {
      * @throws OutOfBoundsException if (x, y) is out of bounds
      * @throws NullPointerException if d is null
      */
-    public final void addWall(int x, int y, Direction d) {
+    public void addWall(int x, int y, Direction d) {
         checkBounds(x, y);
         b[y * width + x] |= d.mask;
         int tx = x + d.dx;
@@ -104,12 +104,12 @@ public abstract class Maze implements Serializable {
      * @throws OutOfBoundsException if p is out of bounds
      * @throws NullPointerException if an argument is null
      */
-    public final void addWall(Point p, Direction d) {
+    public void addWall(Point p, Direction d) {
         addWall(p.getX(), p.getY(), d);
     }
 
     /** Puts walls on the border. */
-    public final void addBorder() {
+    public void addBorder() {
         for (int y = 0; y < height; ++y) {
             b[y * width] |= Direction.WEST.mask;
             b[(y + 1) * width - 1] |= Direction.EAST.mask;
@@ -121,7 +121,7 @@ public abstract class Maze implements Serializable {
     }
 
     /** Puts walls everywhere. */
-    public final void fill() {
+    public void fill() {
         Arrays.fill(b, (byte) WALL_MASK);
     }
 
@@ -134,7 +134,7 @@ public abstract class Maze implements Serializable {
      * @throws OutOfBoundsException if (x, y) is out of bounds
      * @throws NullPointerException if d is null
      */
-    public final void removeWall(int x, int y, Direction d) {
+    public void removeWall(int x, int y, Direction d) {
         checkBounds(x, y);
         b[y * width + x] &= ~d.mask;
         int tx = x + d.dx;
@@ -152,51 +152,51 @@ public abstract class Maze implements Serializable {
      * @throws OutOfBoundsException if p is out of bounds
      * @throws NullPointerException if an argument is null
      */
-    public final void removeWall(Point p, Direction d) {
+    public void removeWall(Point p, Direction d) {
         removeWall(p.getX(), p.getY(), d);
     }
 
     /** Removes all walls. */
-    public final void clear() {
+    public void clear() {
         Arrays.fill(b, (byte) 0);
     }
 
     /** Returns the flag bits for a node. */
-    protected final int getFlags(int x, int y) {
+    protected int getFlags(int x, int y) {
         /* Mask is required b/c of sign extension from widening conversion. */
         return (b[y * width + x] >> 4) & WALL_MASK;
     }
 
     /** Returns the flag bits for a node. */
-    protected final int getFlags(Point p) {
+    protected int getFlags(Point p) {
         return getFlags(p.getX(), p.getY());
     }
 
     /** Sets the flag bits for a node. */
-    protected final void setFlags(int x, int y, int flags) {
+    protected void setFlags(int x, int y, int flags) {
         int i = y * width + x;
         b[i] = (byte) ((b[i] & WALL_MASK) | (flags << 4));
     }
 
     /** Sets the flag bits for a node. */
-    protected final void setFlags(Point p, int flags) {
+    protected void setFlags(Point p, int flags) {
         setFlags(p.getX(), p.getY(), flags);
     }
 
     /** Checks if coordinates are in bounds. */
-    protected final boolean isInBounds(int x, int y) {
+    protected boolean isInBounds(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
     /** Checks if coordinates are in bounds and throws an exception if not. */
-    protected final void checkBounds(int x, int y) {
+    protected void checkBounds(int x, int y) {
         if (!isInBounds(x, y)) {
             throw new OutOfBoundsException("(" + x + ", " + y + ")");
         }
     }
 
     /** Checks if a node is walled off from all directions. */
-    protected final boolean isUnvisited(int x, int y) {
+    protected boolean isUnvisited(int x, int y) {
         return (b[y * width + x] & WALL_MASK) == WALL_MASK;
     }
 
