@@ -37,14 +37,14 @@ public class Ellers extends Maze implements Serializable {
             left[x] = right[x] = x;
         }
 
-        int xl = getWidth() - 1;
-        int yl = getHeight() - 1;
+        int xs = getWidth() - 1;
+        int ys = getHeight() - 1;
 
-        for (int y = 0; y < yl; ++y) {
-            for (int x = 0; x < xl; ++x) {
+        for (int y = 0; y < ys; ++y) {
+            for (int x = 0; x < xs; ++x) {
                 /* Creates horizontal passages. */
                 if (right[x] != x + 1 && rnd.nextInt(5) < 3) {
-                    /* Unions the sets. */
+                    /* Unions the adjacent sets. */
                     left[right[x]] = left[x + 1];
                     right[left[x + 1]] = right[x];
                     right[x] = x + 1;
@@ -61,23 +61,23 @@ public class Ellers extends Maze implements Serializable {
                 }
             }
             /* Creates vertical passages for the last column. */
-            if (right[xl] != xl && rnd.nextInt(5) < 3) {
-                left[right[xl]] = left[xl];
-                right[left[xl]] = right[xl];
-                left[xl] = right[xl] = xl;
+            if (right[xs] != xs && rnd.nextInt(5) < 3) {
+                left[right[xs]] = left[xs];
+                right[left[xs]] = right[xs];
+                left[xs] = right[xs] = xs;
             } else {
-                removeWall(xl, y, Direction.SOUTH);
+                removeWall(xs, y, Direction.SOUTH);
             }
         }
 
         /* Creates the last row. */
-        for (int x = 0; x < xl; ++x) {
+        for (int x = 0; x < xs; ++x) {
             if (right[x] != x + 1) {
                 left[right[x]] = left[x + 1];
                 right[left[x + 1]] = right[x];
                 right[x] = x + 1;
                 left[x + 1] = x;
-                removeWall(x, yl, Direction.EAST);
+                removeWall(x, ys, Direction.EAST);
             }
         }
     }
