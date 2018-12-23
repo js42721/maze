@@ -40,23 +40,21 @@ public class Ellers extends Maze implements Serializable {
         int xs = getWidth() - 1;
         int ys = getHeight() - 1;
 
-        int ln, rx;
+        int rx;
 
         for (int y = 0; y < ys; ++y) {
             for (int x = 0; x < xs; ++x) {
                 /* Creates horizontal passages. */
                 if ((rx = right[x]) != x + 1 && rnd.nextInt(5) < 3) {
                     /* Unions the sets by splicing their lists. */
-                    ln = left[rx] = left[x + 1];
-                    right[ln] = rx;
+                    right[left[rx] = left[x + 1]] = rx;
                     right[x] = x + 1;
                     left[x + 1] = x;
                     removeWall(x, y, Direction.EAST);
                 }
                 /* Creates vertical passages. */
                 if ((rx = right[x]) != x && rnd.nextInt(5) < 3) {
-                    ln = left[rx] = left[x];
-                    right[ln] = rx;
+                    right[left[rx] = left[x]] = rx;
                     left[x] = right[x] = x;
                 } else {
                     removeWall(x, y, Direction.SOUTH);
@@ -64,8 +62,7 @@ public class Ellers extends Maze implements Serializable {
             }
             /* Creates vertical passages for the last column. */
             if ((rx = right[xs]) != xs && rnd.nextInt(5) < 3) {
-                ln = left[rx] = left[xs];
-                right[ln] = rx;
+                right[left[rx] = left[xs]] = rx;
                 left[xs] = right[xs] = xs;
             } else {
                 removeWall(xs, y, Direction.SOUTH);
@@ -75,8 +72,7 @@ public class Ellers extends Maze implements Serializable {
         /* Creates the last row. */
         for (int x = 0; x < xs; ++x) {
             if ((rx = right[x]) != x + 1) {
-                ln = left[rx] = left[x + 1];
-                right[ln] = rx;
+                right[left[rx] = left[x + 1]] = rx;
                 right[x] = x + 1;
                 left[x + 1] = x;
                 removeWall(x, ys, Direction.EAST);
