@@ -28,23 +28,23 @@ public class Ellers extends Maze implements Serializable {
     }
 
     private void ellers() {
-        /* Left/right pointers of a doubly-linked list (the set container). */
+        /* Links for doubly linked lists (each set is stored as a list). */
         int[] left = new int[getWidth()];
         int[] right = new int[getWidth()];
 
-        /* Initializes the sets. */
+        /* Each node in the first row starts out in its own set. */
         for (int x = 0; x < getWidth(); ++x) {
             left[x] = right[x] = x;
         }
 
-        int xEnd = getWidth() - 1;
-        int yEnd = getHeight() - 1;
+        int xl = getWidth() - 1;
+        int yl = getHeight() - 1;
 
-        for (int y = 0; y < yEnd; ++y) {
-            for (int x = 0; x < xEnd; ++x) {
+        for (int y = 0; y < yl; ++y) {
+            for (int x = 0; x < xl; ++x) {
                 /* Creates horizontal passages. */
                 if (right[x] != x + 1 && rnd.nextInt(5) < 3) {
-                    /* Unions the two sets. */
+                    /* Unions the sets. */
                     left[right[x]] = left[x + 1];
                     right[left[x + 1]] = right[x];
                     right[x] = x + 1;
@@ -60,25 +60,24 @@ public class Ellers extends Maze implements Serializable {
                     removeWall(x, y, Direction.SOUTH);
                 }
             }
-
-            /* Creates vertical passages for the rightmost column. */
-            if (right[xEnd] != xEnd && rnd.nextInt(5) < 3) {
-                left[right[xEnd]] = left[xEnd];
-                right[left[xEnd]] = right[xEnd];
-                left[xEnd] = right[xEnd] = xEnd;
+            /* Creates vertical passages for the last column. */
+            if (right[xl] != xl && rnd.nextInt(5) < 3) {
+                left[right[xl]] = left[xl];
+                right[left[xl]] = right[xl];
+                left[xl] = right[xl] = xl;
             } else {
-                removeWall(xEnd, y, Direction.SOUTH);
+                removeWall(xl, y, Direction.SOUTH);
             }
         }
 
         /* Creates the last row. */
-        for (int x = 0; x < xEnd; ++x) {
+        for (int x = 0; x < xl; ++x) {
             if (right[x] != x + 1) {
                 left[right[x]] = left[x + 1];
                 right[left[x + 1]] = right[x];
                 right[x] = x + 1;
                 left[x + 1] = x;
-                removeWall(x, yEnd, Direction.EAST);
+                removeWall(x, yl, Direction.EAST);
             }
         }
     }
