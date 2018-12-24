@@ -30,7 +30,7 @@ public class Ellers extends Maze implements Serializable {
     private void ellers() {
         /*
          * Circular doubly linked lists are used to store sets of connected maze
-         * nodes and these arrays store the left/right links for those lists.
+         * nodes and these arrays store the left/right links of those lists.
          */
         int[] l = new int[getWidth()];
         int[] r = new int[getWidth()];
