@@ -12,7 +12,7 @@ public class Ellers extends Maze implements Serializable {
     /**
      * Sets the dimensions of the maze.
      *
-     * @param  width the width of the maze
+     * @param  width  the width of the maze
      * @param  height the height of the maze
      * @throws IllegalArgumentException if width or height is not positive
      */
@@ -29,8 +29,8 @@ public class Ellers extends Maze implements Serializable {
 
     private void ellers() {
         /*
-         * Sets of maze nodes are stored as circular doubly linked lists.
-         * These arrays store the left/right links for those lists. 
+         * Circular doubly linked lists are used to store sets of connected maze
+         * nodes and these arrays store the left/right links for those lists.
          */
         int[] l = new int[getWidth()];
         int[] r = new int[getWidth()];
